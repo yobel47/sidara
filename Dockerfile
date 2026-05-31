@@ -2,9 +2,18 @@
 FROM php:8.2-fpm
 
 # Install dependencies yang dibutuhkan Laravel
-# #
+# Update repository dan install dependencies sistem terlebih dahulu
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    git \
+    libonig-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql gd zip
+RUN docker-php-ext-install pdo_mysql gd zip mbstring
 
 # Copy source code ke dalam container
 COPY . /var/www
