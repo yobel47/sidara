@@ -22,8 +22,10 @@ jobs:
             
             # Tambahkan pengecekan agar tidak error jika file docker-compose tidak ditemukan
             if [ -f "docker-compose.yml" ]; then
-              sudo docker compose build
-              sudo docker compose up -d
+              sudo docker compose exec -T app composer install --no-dev --optimize-autoloader
+              sudo docker compose exec -T app npm install
+              sudo docker compose exec -T app npm run build
+              sudo docker compose up -d --force-recreate
             else
               echo "docker-compose.yml tidak ditemukan, skip docker build."
             fi
