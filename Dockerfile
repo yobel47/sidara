@@ -1,8 +1,7 @@
 # Menggunakan image PHP
 FROM php:8.2-fpm
 
-# Install dependencies yang dibutuhkan Laravel
-# Update repository dan install dependencies sistem terlebih dahulu
+# Install dependencies sistem
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libzip-dev \
@@ -10,16 +9,16 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     libonig-dev \
-    && rm -rf /var/lib/apt/lists/* \
     curl \
     gnupg \
     && curl -sL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql gd zip mbstring
 
-# Copy source code ke dalam container
+# Copy source code
 COPY . /var/www
 
 # Atur working directory
