@@ -1,0 +1,20 @@
+name: Deploy Laravel
+on:
+  push:
+    branches: [ "main" ] # Setiap kali ada update di branch main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy ke VPS via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /var/www/sidara
+            git pull origin main
+            docker compose build
+            docker compose up -d
