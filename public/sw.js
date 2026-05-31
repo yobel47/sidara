@@ -1,5 +1,5 @@
 const CACHE_NAME = 'sidara-v1';
-const urlsToCache = ['/', '/offline']; // Pastikan route ini ada
+const urlsToCache = ['/']; // Pastikan route ini ada
 
 self.addEventListener('install', (event) => {
     event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache)));
