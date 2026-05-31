@@ -10,7 +10,11 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     libonig-dev \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    curl \
+    gnupg \
+    && curl -sL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql gd zip mbstring
