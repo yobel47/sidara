@@ -1,4 +1,5 @@
 <?php
+putenv('TMPDIR=' . __DIR__ . '/../storage/framework/cache/data');
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
