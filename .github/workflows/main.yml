@@ -22,8 +22,8 @@ jobs:
             
             # Tambahkan pengecekan agar tidak error jika file docker-compose tidak ditemukan
             if [ -f "docker-compose.yml" ]; then
-              docker compose build
-              docker compose up -d
+              sudo docker compose build
+              sudo docker compose up -d
             else
               echo "docker-compose.yml tidak ditemukan, skip docker build."
             fi
