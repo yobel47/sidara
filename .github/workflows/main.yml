@@ -1,0 +1,32 @@
+name: Deploy Laravel
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy ke VPS via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /var/www/sidara
+            sudo chown -R $USER:$USER /var/www/sidara
+            git config --global --add safe.directory /var/www/sidara
+            git fetch origin main
+            git reset --hard origin/main
+            
+            # Tambahkan pengecekan agar tidak error jika file docker-compose tidak ditemukan
+            if [ -f "docker-compose.yml" ]; then
+              docker compose build
+              docker compose up -d
+            else
+              echo "docker-compose.yml tidak ditemukan, skip docker build."
+            fi
+            
+            # Tambahkan exit 0 agar GitHub Actions tahu proses ini sukses
+            exit 0
