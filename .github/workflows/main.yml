@@ -15,10 +15,15 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd /var/www/sidara
-            # Tambahkan baris ini untuk mengatasi error dubious ownership
+            # Paksa ubah pemilik ke user SSH agar Git tidak protes
+            sudo chown -R $USER:$USER /var/www/sidara
+            
+            # Tambahkan safe.directory agar Git percaya pada folder ini
             git config --global --add safe.directory /var/www/sidara
             
+            # Lakukan pull
             git pull origin main
+            
+            # Build & Restart Docker
             docker compose build
             docker compose up -d
-            
