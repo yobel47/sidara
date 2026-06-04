@@ -26,6 +26,9 @@ jobs:
               sudo docker compose exec -T app npm install
               sudo docker compose exec -T app npm run build
               sudo docker compose up -d --force-recreate
+
+              sudo docker compose exec -T app chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+              sudo docker compose exec -T app chmod -R 775 /var/www/storage /var/www/bootstrap/cache
             else
               echo "docker-compose.yml tidak ditemukan, skip docker build."
             fi
