@@ -1,0 +1,147 @@
+{{-- resources/views/livewire/pages/auth/register.blade.php --}}
+
+<div class="flex flex-col min-h-screen lg:min-h-0 px-6 pt-12 pb-8 lg:px-8 lg:pt-10 lg:pb-10">
+
+    {{-- HEADER --}}
+    <div class="mb-8">
+        <a href="{{ route('login') }}" wire:navigate
+           class="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-5 -ml-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
+            </svg>
+        </a>
+        <h1 class="text-2xl font-extrabold text-rose-500 leading-tight">Registrasi</h1>
+        <p class="text-sm text-gray-400 mt-1">Buat akun baru</p>
+    </div>
+
+    {{-- FORM --}}
+    <form wire:submit="register" class="flex flex-col gap-4">
+
+        {{-- Username --}}
+        <div>
+            <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0zM4.501 20.118a7.5 7.5 0 0 1 14.998 0"/>
+                    </svg>
+                </span>
+                <input wire:model="username" type="text" placeholder="Username" autocomplete="username"
+                    class="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white text-sm text-gray-800 placeholder-gray-400 outline-none transition-all
+                           {{ $errors->has('username') ? 'border-2 border-rose-400 ring-2 ring-rose-100' : 'border border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"/>
+            </div>
+            @error('username')
+            <p class="text-xs text-rose-500 mt-1.5 ml-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Email --}}
+        <div>
+            <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/>
+                    </svg>
+                </span>
+                <input wire:model="email" type="email" placeholder="Email" autocomplete="email"
+                    class="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-white text-sm text-gray-800 placeholder-gray-400 outline-none transition-all
+                           {{ $errors->has('email') ? 'border-2 border-rose-400 ring-2 ring-rose-100' : 'border border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"/>
+            </div>
+            @error('email')
+            <p class="text-xs text-rose-500 mt-1.5 ml-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Password --}}
+        <div>
+            <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25z"/>
+                    </svg>
+                </span>
+                <input wire:model="password"
+                    type="{{ $showPassword ? 'text' : 'password' }}"
+                    placeholder="Password" autocomplete="new-password"
+                    class="w-full pl-11 pr-12 py-3.5 rounded-2xl bg-white text-sm text-gray-800 placeholder-gray-400 outline-none transition-all
+                           {{ $errors->has('password') ? 'border-2 border-rose-400 ring-2 ring-rose-100' : 'border border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"/>
+                <button type="button"
+                        wire:click="togglePassword"
+                        wire:target="togglePassword"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                    @if($showPassword)
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                    @else
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+                    @endif
+                </button>
+            </div>
+            @error('password')
+            <p class="text-xs text-rose-500 mt-1.5 ml-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Konfirmasi Password --}}
+        <div>
+            <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25z"/>
+                    </svg>
+                </span>
+                <input wire:model="passwordConfirmation"
+                    type="{{ $showPasswordConfirmation ? 'text' : 'password' }}"
+                    placeholder="Konfirmasi Password" autocomplete="new-password"
+                    class="w-full pl-11 pr-12 py-3.5 rounded-2xl bg-white text-sm text-gray-800 placeholder-gray-400 outline-none transition-all
+                           {{ $errors->has('passwordConfirmation') ? 'border-2 border-rose-400 ring-2 ring-rose-100' : 'border border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"/>
+                <button type="button"
+                        wire:click="togglePasswordConfirmation"
+                        wire:target="togglePasswordConfirmation"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                    @if($showPasswordConfirmation)
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                    @else
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+                    @endif
+                </button>
+            </div>
+            @error('passwordConfirmation')
+            <p class="text-xs text-rose-500 mt-1.5 ml-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        @if(session('error'))
+        <div class="bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 -mt-1">
+            <p class="text-xs text-rose-600 font-medium">{{ session('error') }}</p>
+        </div>
+        @endif
+
+        <button type="submit"
+                class="w-full py-4 rounded-2xl bg-rose-500 hover:bg-rose-600 active:scale-[0.98]
+                       text-white font-extrabold text-sm tracking-widest uppercase
+                       shadow-lg shadow-rose-200 transition-all mt-2
+                       flex items-center justify-center gap-2
+                       disabled:opacity-70 disabled:cursor-not-allowed"
+                wire:loading.attr="disabled"
+                wire:target="register">
+
+            <svg wire:loading wire:target="register"
+                 class="w-4 h-4 animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+            <span wire:loading.remove wire:target="register">DAFTAR</span>
+            <span wire:loading wire:target="register">Memproses...</span>
+
+        </button>
+
+    </form>
+
+    <p class="text-center text-sm text-gray-400 mt-8">
+        Sudah punya akun?
+        <a href="{{ route('login') }}" wire:navigate
+           class="font-bold text-rose-500 hover:text-rose-600 ml-1">
+            Login di sini
+        </a>
+    </p>
+
+</div>

@@ -13,6 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*');
+        // Kalau belum login → redirect ke /login
+        $middleware->redirectGuestsTo(fn() => route('login'));
+ 
+        // Kalau sudah login → redirect ke /
+        $middleware->redirectUsersTo(fn() => route('home'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
