@@ -18,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
  
         // Kalau sudah login → redirect ke /
         $middleware->redirectUsersTo(fn() => route('home'));
+        
+        // Daftarkan alias — bisa dipakai di route sebagai 'profile.complete'
+        $middleware->alias([
+            'profile.complete' => \App\Http\Middleware\ProfileComplete::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#ec4899">
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>{{ $title ?? config('app.name') }}</title>
     <link rel="manifest" href="/manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,20 +22,32 @@
             @livewire('layout.sidebar')
         </aside>
 
-        {{-- MAIN AREA --}}
         <div class="flex flex-col flex-1 min-h-screen">
 
-            {{-- Top header — desktop only --}}
+            {{-- TOP HEADER — desktop only --}}
             <header class="hidden lg:flex items-center justify-between px-8 py-4 bg-white border-b border-pink-100 sticky top-0 z-30">
-                <h1 class="text-base font-extrabold text-gray-800">{{ $pageTitle ?? 'Beranda' }}</h1>
+                <div class="flex items-center gap-3">
+                    {{-- Back button — hanya tampil kalau $showBack = true --}}
+                    @if(isset($showBack) && $showBack)
+                    <a href="{{ $backRoute ?? 'javascript:history.back()' }}"
+                       wire:navigate
+                       class="p-1.5 rounded-xl hover:bg-pink-50 text-gray-500 hover:text-rose-500 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>
+                        </svg>
+                    </a>
+                    @endif
+                    <h1 class="text-base font-extrabold text-gray-800">{{ $pageTitle ?? 'Beranda' }}</h1>
+                </div>
             </header>
 
-            {{-- Page content --}}
-            {{-- 
-                padding-bottom mobile: tinggi bottom nav (64px) + safe area
-                padding-bottom desktop: 0
+            {{-- PAGE CONTENT --}}
+            {{--
+                Mobile: padding-bottom = tinggi bottom nav (64px) + safe area
+                Desktop: tidak perlu padding-bottom
             --}}
-            <main class="flex-1" style="padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));" 
+            <main class="flex-1 overflow-y-auto"
+                  style="padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));"
                   class="lg:pb-0">
                 {{ $slot }}
             </main>
