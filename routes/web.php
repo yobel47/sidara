@@ -12,6 +12,7 @@ use App\Livewire\Pages\Identity;
 use App\Livewire\Pages\InitialScreening;
 use App\Livewire\Pages\ResultScreening;
 use App\Livewire\Pages\Pregnancy;
+use App\Livewire\Pages\AncVisit;
 use App\Livewire\Pages\Childbirth;
 use App\Livewire\Pages\Baby;
 use App\Livewire\Pages\MedicalRecord;
@@ -55,7 +56,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/',              Home::class)->name('home');
     Route::get('/skrining-awal', InitialScreening::class)->name('skrining-awal');
     Route::get('/skrining-awal/{id}/hasil', ResultScreening::class)->name('skrining-hasil');
-    Route::get('/kehamilan',     Pregnancy::class)->name('kehamilan');
+    Route::get('/kehamilan',                  Pregnancy::class)->name('kehamilan');
+    Route::get('/kehamilan/kunjungan-baru',   AncVisit::class)->name('anc-visit');
     Route::get('/persalinan',    Childbirth::class)->name('persalinan');
     Route::get('/data-bayi',     Baby::class)->name('data-bayi');
     Route::get('/rekam-medis',   MedicalRecord::class)->name('rekam-medis');

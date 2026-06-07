@@ -51,8 +51,8 @@
                 Mobile: padding-bottom = tinggi bottom nav (64px) + safe area
                 Desktop: tidak perlu padding-bottom
             --}}
-            <main class="flex-1 overflow-y-auto" style="padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));"
-                class="lg:pb-0">
+            <main class="flex-1 flex flex-col overflow-y-auto lg:!pb-0"
+                style="padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));">
                 {{ $slot }}
             </main>
 
