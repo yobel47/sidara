@@ -113,7 +113,7 @@
                             </span>
                             <a href="{{ route('kehamilan') }}" wire:navigate
                                 class="text-xs font-semibold text-violet-500 flex items-center gap-0.5">
-                                Lihat tren
+                                Lihat kunjungan
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round"
