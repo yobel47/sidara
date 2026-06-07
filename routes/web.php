@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 // Auth pages
 use App\Livewire\Pages\Auth\Login;
 use App\Livewire\Pages\Auth\Register;
+use App\Livewire\Pages\Auth\ForgotPassword;
+use App\Livewire\Pages\Auth\ResetPassword;
 
 // Pages
 use App\Livewire\Pages\Home;
@@ -26,11 +28,10 @@ use App\Livewire\Pages\UpdateStatus;
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
-    Route::get('/login',    Login::class)->name('login');
-    Route::get('/register', Register::class)->name('register');
-    Route::get('/lupa-password', function () {
-        return 'Coming soon';
-    })->name('password.request');
+    Route::get('/login',         Login::class)->name('login');
+    Route::get('/register',      Register::class)->name('register');
+    Route::get('/lupa-password', ForgotPassword::class)->name('password.request');
+    Route::get('/reset-password/{token}', ResetPassword::class)->name('password.reset');
 });
  
 
