@@ -104,7 +104,7 @@
             </div>
             <div class="flex items-start justify-between px-4 py-3.5">
                 <span class="text-sm text-gray-500">Hemoglobin Terakhir</span>
-                <div class="flex flex-col items-end gap-1">
+                <div class="flex flex-row items-end gap-1">
                     <span class="text-sm font-semibold text-gray-800">{{ $ringkasan['hemoglobinTerakhir'] }} g/dL</span>
                     <span class="text-xs font-bold px-3 py-0.5 rounded-full {{ $warnaRingkasan }}">
                         {{ $ringkasan['statusAnemia'] }}

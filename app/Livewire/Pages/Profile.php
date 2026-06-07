@@ -4,6 +4,7 @@ namespace App\Livewire\Pages;
 
 use Livewire\Component;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Pregnancy;
 use App\Models\Childbirth;
 use App\Models\Baby;
@@ -18,6 +19,11 @@ class Profile extends Component
     public string $email    = '';
     public string $phone    = '';
     public string $address  = '';
+
+    // Ganti password (opsional)
+    public string $currentPassword           = '';
+    public string $newPassword               = '';
+    public string $newPasswordConfirmation   = '';
 
     // Data read-only untuk tampilan
     public array $kondisi = [];
@@ -37,6 +43,7 @@ class Profile extends Component
     public function cancel(): void
     {
         $this->loadEditableFields();
+        $this->resetPasswordFields();
         $this->resetValidation();
         $this->mode = 'view';
     }
@@ -80,9 +87,33 @@ class Profile extends Component
             'address'  => $this->address,
         ]);
 
+        // Ganti password jika diisi
+        if ($this->newPassword !== '') {
+            $this->validate([
+                'currentPassword'         => 'required',
+                'newPassword'             => 'required|string|min:6|same:newPasswordConfirmation',
+                'newPasswordConfirmation' => 'required',
+            ], [
+                'currentPassword.required'         => 'Password saat ini wajib diisi.',
+                'newPassword.required'             => 'Password baru wajib diisi.',
+                'newPassword.min'                  => 'Password baru minimal 6 karakter.',
+                'newPassword.same'                 => 'Konfirmasi password tidak cocok.',
+                'newPasswordConfirmation.required' => 'Konfirmasi password wajib diisi.',
+            ]);
+
+            if (!Hash::check($this->currentPassword, $user->password)) {
+                $this->addError('currentPassword', 'Password saat ini tidak sesuai.');
+                return;
+            }
+
+            $user->update(['password' => Hash::make($this->newPassword)]);
+        }
+
         $user->refresh();
         $this->loadKondisi();
+        $this->resetPasswordFields();
         $this->mode = 'view';
+        $this->dispatch('toast', message: 'Profil berhasil diperbarui.');
     }
 
     public function logout(): void
@@ -91,6 +122,13 @@ class Profile extends Component
         session()->invalidate();
         session()->regenerateToken();
         $this->redirect(route('login'), navigate: true);
+    }
+
+    private function resetPasswordFields(): void
+    {
+        $this->currentPassword         = '';
+        $this->newPassword             = '';
+        $this->newPasswordConfirmation = '';
     }
 
     private function loadEditableFields(): void
@@ -137,6 +175,7 @@ class Profile extends Component
             'usiaKehamilan' => $latestAnc
                 ? $latestAnc->gestational_age . ' minggu'
                 : ($chUser->gestationalAge ? $chUser->gestationalAge : '-'),
+            'fromAnc'       => $latestAnc !== null,
             'status'        => $status,
             'statusColor'   => $statusColor,
         ];

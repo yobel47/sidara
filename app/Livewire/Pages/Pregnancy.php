@@ -4,6 +4,8 @@ namespace App\Livewire\Pages;
 
 use Livewire\Component;
 use App\Models\Pregnancy as PregnancyModel;
+use App\Models\Childbirth;
+use App\Models\Baby;
 use Carbon\Carbon;
 
 class Pregnancy extends Component
@@ -11,8 +13,23 @@ class Pregnancy extends Component
     public ?array $ringkasan  = null;
     public array  $kunjungan  = [];
 
+    private function isNotPregnant(): bool
+    {
+        $userId = auth()->id();
+        $user   = auth()->user();
+        $hasBirth = Childbirth::where('id_user', $userId)->exists();
+        $hasBaby  = Baby::where('id_user', $userId)->exists();
+        $isHamil  = $user->chUser && $user->chUser->statusPregnant === 'hamil';
+        return !($hasBirth && $hasBaby) && !$isHamil;
+    }
+
     public function mount(): void
     {
+        if ($this->isNotPregnant()) {
+            $this->redirect(route('home'), navigate: true);
+            return;
+        }
+
         // Descending: visit terbaru di index 0
         $visits = PregnancyModel::where('id_user', auth()->id())
             ->orderByDesc('date_pregnancy')

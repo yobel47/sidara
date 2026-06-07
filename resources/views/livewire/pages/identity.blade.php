@@ -20,7 +20,8 @@
         padding-bottom mobile : tinggi bottom nav (64px) + tombol simpan (72px) + safe area
         padding-bottom desktop: cukup normal karena tidak ada fixed nav
     --}}
-    <div class="flex-1 px-5 pt-6 pb-4 space-y-5 lg:max-w-2xl lg:mx-auto lg:w-full">
+    <div class="flex-1 px-5 pt-6 pb-4 space-y-5 lg:max-w-2xl lg:mx-auto lg:w-full"
+         x-data="{ status: $wire.entangle('statusPregnant') }">
 
         {{-- Nama Lengkap --}}
         <div>
@@ -123,40 +124,42 @@
             <label class="block text-sm font-semibold text-gray-700 mb-2">Status Hamil</label>
             <div class="grid grid-cols-2 gap-3">
 
-                <button type="button" wire:click="$set('statusPregnant', 'hamil')"
-                        class="flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all
-                               {{ $statusPregnant === 'hamil' ? 'border-rose-400 bg-rose-50' : 'border-gray-200 bg-white hover:border-rose-200' }}">
-                    <div class="w-9 h-9 shrink-0 rounded-full flex items-center justify-center
-                                {{ $statusPregnant === 'hamil' ? 'bg-rose-100' : 'bg-gray-100' }}">
+                {{-- Hamil --}}
+                <button type="button" @click="status = 'hamil'"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all"
+                        :class="status === 'hamil' ? 'border-rose-400 bg-rose-50' : 'border-gray-200 bg-white hover:border-rose-200'">
+                    <div class="w-9 h-9 shrink-0 rounded-full flex items-center justify-center"
+                         :class="status === 'hamil' ? 'bg-rose-100' : 'bg-gray-100'">
                         <svg viewBox="0 0 36 36" class="w-6 h-6" fill="none">
-                            <circle cx="18" cy="10" r="5" fill="{{ $statusPregnant === 'hamil' ? '#ec4899' : '#9ca3af' }}" opacity="0.9"/>
+                            <circle cx="18" cy="10" r="5" :fill="status === 'hamil' ? '#ec4899' : '#9ca3af'" opacity="0.9"/>
                             <path d="M10 20 C10 15 13 13 18 13 C23 13 26 15 26 20 L26 28 C26 31 23 33 18 33 C13 33 10 31 10 28Z"
-                                fill="{{ $statusPregnant === 'hamil' ? '#ec4899' : '#9ca3af' }}" opacity="0.8"/>
+                                :fill="status === 'hamil' ? '#ec4899' : '#9ca3af'" opacity="0.8"/>
                             <ellipse cx="18" cy="25" rx="6" ry="5"
-                                fill="{{ $statusPregnant === 'hamil' ? '#f9a8d4' : '#d1d5db' }}"/>
-                            <path d="M10 20 Q6 22 6 26" stroke="{{ $statusPregnant === 'hamil' ? '#ec4899' : '#9ca3af' }}" stroke-width="3" fill="none" stroke-linecap="round"/>
-                            <path d="M26 20 Q30 22 30 26" stroke="{{ $statusPregnant === 'hamil' ? '#ec4899' : '#9ca3af' }}" stroke-width="3" fill="none" stroke-linecap="round"/>
+                                :fill="status === 'hamil' ? '#f9a8d4' : '#d1d5db'"/>
+                            <path d="M10 20 Q6 22 6 26" :stroke="status === 'hamil' ? '#ec4899' : '#9ca3af'" stroke-width="3" fill="none" stroke-linecap="round"/>
+                            <path d="M26 20 Q30 22 30 26" :stroke="status === 'hamil' ? '#ec4899' : '#9ca3af'" stroke-width="3" fill="none" stroke-linecap="round"/>
                         </svg>
                     </div>
-                    <span class="text-sm font-bold {{ $statusPregnant === 'hamil' ? 'text-rose-600' : 'text-gray-500' }}">
+                    <span class="text-sm font-bold" :class="status === 'hamil' ? 'text-rose-600' : 'text-gray-500'">
                         Hamil
                     </span>
                 </button>
 
-                <button type="button" wire:click="$set('statusPregnant', 'tidak_hamil')"
-                        class="flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all
-                               {{ $statusPregnant === 'tidak_hamil' ? 'border-rose-400 bg-rose-50' : 'border-gray-200 bg-white hover:border-rose-200' }}">
-                    <div class="w-9 h-9 shrink-0 rounded-full flex items-center justify-center
-                                {{ $statusPregnant === 'tidak_hamil' ? 'bg-rose-100' : 'bg-gray-100' }}">
+                {{-- Tidak Hamil --}}
+                <button type="button" @click="status = 'tidak_hamil'"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all"
+                        :class="status === 'tidak_hamil' ? 'border-rose-400 bg-rose-50' : 'border-gray-200 bg-white hover:border-rose-200'">
+                    <div class="w-9 h-9 shrink-0 rounded-full flex items-center justify-center"
+                         :class="status === 'tidak_hamil' ? 'bg-rose-100' : 'bg-gray-100'">
                         <svg viewBox="0 0 36 36" class="w-6 h-6" fill="none">
-                            <circle cx="18" cy="11" r="5" fill="{{ $statusPregnant === 'tidak_hamil' ? '#ec4899' : '#9ca3af' }}" opacity="0.9"/>
+                            <circle cx="18" cy="11" r="5" :fill="status === 'tidak_hamil' ? '#ec4899' : '#9ca3af'" opacity="0.9"/>
                             <path d="M11 21 C11 16 14 14 18 14 C22 14 25 16 25 21 L25 30 C25 32 22 34 18 34 C14 34 11 32 11 30Z"
-                                fill="{{ $statusPregnant === 'tidak_hamil' ? '#ec4899' : '#9ca3af' }}" opacity="0.8"/>
-                            <path d="M11 21 Q7 23 7 27" stroke="{{ $statusPregnant === 'tidak_hamil' ? '#ec4899' : '#9ca3af' }}" stroke-width="3" fill="none" stroke-linecap="round"/>
-                            <path d="M25 21 Q29 23 29 27" stroke="{{ $statusPregnant === 'tidak_hamil' ? '#ec4899' : '#9ca3af' }}" stroke-width="3" fill="none" stroke-linecap="round"/>
+                                :fill="status === 'tidak_hamil' ? '#ec4899' : '#9ca3af'" opacity="0.8"/>
+                            <path d="M11 21 Q7 23 7 27" :stroke="status === 'tidak_hamil' ? '#ec4899' : '#9ca3af'" stroke-width="3" fill="none" stroke-linecap="round"/>
+                            <path d="M25 21 Q29 23 29 27" :stroke="status === 'tidak_hamil' ? '#ec4899' : '#9ca3af'" stroke-width="3" fill="none" stroke-linecap="round"/>
                         </svg>
                     </div>
-                    <span class="text-sm font-bold {{ $statusPregnant === 'tidak_hamil' ? 'text-rose-600' : 'text-gray-500' }}">
+                    <span class="text-sm font-bold" :class="status === 'tidak_hamil' ? 'text-rose-600' : 'text-gray-500'">
                         Tidak Hamil
                     </span>
                 </button>
@@ -167,18 +170,10 @@
             @enderror
         </div>
 
-        {{-- Usia Kehamilan --}}
-        @if($statusPregnant === 'hamil')
-        <div wire:transition>
+        {{-- Usia Kehamilan — ditampilkan/disembunyikan murni oleh Alpine, tanpa request backend --}}
+        <div x-show="status === 'hamil'" x-transition
+             style="{{ $statusPregnant !== 'hamil' ? 'display:none' : '' }}">
             <label class="block text-sm font-semibold text-gray-700 mb-1.5">Usia Kehamilan</label>
-            {{--
-                SOLUSI ARROW DOBEL:
-                - Hilangkan appearance-none TIDAK — justru kita pakai appearance-none
-                  supaya arrow bawaan browser hilang, lalu kita tambah arrow CSS sendiri
-                  via background-image. Ini lebih reliable dari absolute SVG.
-                - Atau: gunakan appearance-none + padding-right besar, dan SVG absolute.
-                  Pastikan pointer-events:none pada SVG.
-            --}}
             <div class="relative">
                 <select wire:model="gestationalAge"
                     class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none transition-all
@@ -196,7 +191,6 @@
                     <option value="33-36">33-36 Minggu (Trimester 3)</option>
                     <option value="37-40">37-40 Minggu (Trimester 3)</option>
                 </select>
-                {{-- Arrow — pointer-events:none supaya tidak block klik select --}}
                 <span class="absolute right-[0.68rem] top-1/2 -translate-y-1/2 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m19 9-7 7-7-7"/>
@@ -205,7 +199,6 @@
             </div>
             @error('gestationalAge')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
         </div>
-        @endif
  
     </div>
  

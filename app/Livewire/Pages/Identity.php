@@ -86,6 +86,6 @@ class Identity extends Component
     public function render()
     {
         return view('livewire.pages.identity')
-            ->layout('layouts.guest', ['title' => 'Identitas Diri']);
+            ->layout('layouts.guest', ['pageTitle' => 'Identitas Diri']);
     }
 }

@@ -4,6 +4,8 @@ namespace App\Livewire\Pages;
 
 use Livewire\Component;
 use App\Models\Pregnancy;
+use App\Models\Childbirth;
+use App\Models\Baby;
 
 class AncVisit extends Component
 {
@@ -15,8 +17,23 @@ class AncVisit extends Component
 
     public ?array $preview = null;
 
+    private function isNotPregnant(): bool
+    {
+        $userId   = auth()->id();
+        $user     = auth()->user();
+        $hasBirth = Childbirth::where('id_user', $userId)->exists();
+        $hasBaby  = Baby::where('id_user', $userId)->exists();
+        $isHamil  = $user->chUser && $user->chUser->statusPregnant === 'hamil';
+        return !($hasBirth && $hasBaby) && !$isHamil;
+    }
+
     public function mount(): void
     {
+        if ($this->isNotPregnant()) {
+            $this->redirect(route('home'), navigate: true);
+            return;
+        }
+
         $this->datePregnancy = now()->format('Y-m-d');
 
         $user = auth()->user();
@@ -74,6 +91,7 @@ class AncVisit extends Component
             'notes'           => $this->notes ?: null,
         ]);
 
+        session()->flash('toast', 'Kunjungan ANC berhasil ditambahkan.');
         $this->redirect(route('kehamilan'), navigate: true);
     }
 

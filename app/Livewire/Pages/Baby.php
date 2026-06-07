@@ -4,6 +4,7 @@ namespace App\Livewire\Pages;
 
 use Livewire\Component;
 use App\Models\Baby as BabyModel;
+use App\Models\Childbirth;
 
 class Baby extends Component
 {
@@ -19,8 +20,23 @@ class Baby extends Component
     public string $weight      = '';
     public string $height      = '';
 
+    private function isNotPregnant(): bool
+    {
+        $userId   = auth()->id();
+        $user     = auth()->user();
+        $hasBirth = Childbirth::where('id_user', $userId)->exists();
+        $hasBaby  = BabyModel::where('id_user', $userId)->exists();
+        $isHamil  = $user->chUser && $user->chUser->statusPregnant === 'hamil';
+        return !($hasBirth && $hasBaby) && !$isHamil;
+    }
+
     public function mount(): void
     {
+        if ($this->isNotPregnant()) {
+            $this->redirect(route('home'), navigate: true);
+            return;
+        }
+
         $existing = BabyModel::where('id_user', auth()->id())->first();
 
         if ($existing) {
@@ -93,6 +109,7 @@ class Baby extends Component
 
         $this->viewData = $this->toViewData(BabyModel::find($this->recordId));
         $this->mode     = 'view';
+        $this->dispatch('toast', message: 'Data bayi berhasil disimpan.');
     }
 
     private function toViewData(BabyModel $record): array

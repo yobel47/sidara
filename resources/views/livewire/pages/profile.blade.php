@@ -75,17 +75,25 @@
             </div>
             <div class="flex items-center justify-between px-4 py-3.5 border-b border-gray-50">
                 <span class="text-sm text-gray-500">Berat Badan</span>
+                @if($kondisi['fromAnc'])
                 <div class="flex flex-col items-end gap-0.5">
                     <span class="text-sm font-semibold text-gray-800">{{ $kondisi['beratBadan'] }}</span>
                     <span class="text-xs text-gray-400">dari kunjungan ANC terakhir</span>
                 </div>
+                @else
+                <span class="text-sm font-semibold text-gray-800">{{ $kondisi['beratBadan'] }}</span>
+                @endif
             </div>
             <div class="flex items-center justify-between px-4 py-3.5 border-b border-gray-50">
                 <span class="text-sm text-gray-500">Usia Kehamilan</span>
+                @if($kondisi['fromAnc'])
                 <div class="flex flex-col items-end gap-0.5">
                     <span class="text-sm font-semibold text-gray-800">{{ $kondisi['usiaKehamilan'] }}</span>
                     <span class="text-xs text-gray-400">dari kunjungan ANC terakhir</span>
                 </div>
+                @else
+                <span class="text-sm font-semibold text-gray-800">{{ $kondisi['usiaKehamilan'] }}</span>
+                @endif
             </div>
             <div class="flex items-center justify-between px-4 py-3.5">
                 <span class="text-sm text-gray-500">Status</span>
@@ -105,6 +113,20 @@
             </svg>
             Edit Profil
         </button>
+
+        {{-- Ubah Status Kehamilan — disembunyikan untuk user melahirkan --}}
+        @if($kondisi['status'] !== 'Melahirkan')
+        <a href="{{ route('perbarui-status') }}" wire:navigate
+            class="w-full py-3.5 rounded-2xl border-2 border-purple-200 hover:border-purple-400
+                   text-purple-500 hover:text-purple-600 font-bold text-sm tracking-wider
+                   transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            Ubah Status Kehamilan
+        </a>
+        @endif
 
         {{-- Tombol Logout — mobile only (desktop ada di sidebar) --}}
         <button wire:click="logout" class="lg:hidden w-full py-3.5 rounded-2xl bg-gray-100 hover:bg-gray-200
@@ -165,6 +187,31 @@
                 @error('address')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
             </div>
 
+        </div>
+
+        {{-- Ganti Password (opsional) --}}
+        <p class="text-sm font-bold text-rose-500 uppercase tracking-wider">Ganti Password</p>
+        <p class="text-xs text-gray-400 -mt-3">Kosongkan jika tidak ingin mengubah password.</p>
+
+        <div class="bg-white rounded-2xl border border-rose-100 shadow-sm overflow-hidden">
+            <div class="border-b border-gray-50 px-4 py-3.5">
+                <label class="block text-xs text-gray-400 mb-1">Password Saat Ini</label>
+                <input wire:model="currentPassword" type="password" placeholder="••••••"
+                    class="w-full text-sm text-gray-800 placeholder-gray-300 outline-none bg-transparent border-none" />
+                @error('currentPassword')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+            </div>
+            <div class="border-b border-gray-50 px-4 py-3.5">
+                <label class="block text-xs text-gray-400 mb-1">Password Baru</label>
+                <input wire:model="newPassword" type="password" placeholder="••••••"
+                    class="w-full text-sm text-gray-800 placeholder-gray-300 outline-none bg-transparent border-none" />
+                @error('newPassword')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+            </div>
+            <div class="px-4 py-3.5">
+                <label class="block text-xs text-gray-400 mb-1">Konfirmasi Password Baru</label>
+                <input wire:model="newPasswordConfirmation" type="password" placeholder="••••••"
+                    class="w-full text-sm text-gray-800 placeholder-gray-300 outline-none bg-transparent border-none" />
+                @error('newPasswordConfirmation')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+            </div>
         </div>
 
         {{-- Simpan --}}

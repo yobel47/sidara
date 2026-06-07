@@ -17,6 +17,7 @@ use App\Livewire\Pages\Childbirth;
 use App\Livewire\Pages\Baby;
 use App\Livewire\Pages\MedicalRecord;
 use App\Livewire\Pages\Profile;
+use App\Livewire\Pages\UpdateStatus;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,8 +59,9 @@ Route::middleware(['auth', 'profile.complete'])->group(function () {
     Route::get('/kehamilan/kunjungan-baru',   AncVisit::class)->name('anc-visit');
     Route::get('/persalinan',    Childbirth::class)->name('persalinan');
     Route::get('/data-bayi',     Baby::class)->name('data-bayi');
-    Route::get('/rekam-medis',   MedicalRecord::class)->name('rekam-medis');
-    Route::get('/profil',        Profile::class)->name('profil');
+    Route::get('/rekam-medis',     MedicalRecord::class)->name('rekam-medis');
+    Route::get('/profil',          Profile::class)->name('profil');
+    Route::get('/perbarui-status', UpdateStatus::class)->name('perbarui-status');
 });
  
 /*

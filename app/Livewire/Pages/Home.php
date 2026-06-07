@@ -4,12 +4,16 @@ namespace App\Livewire\Pages;
 
 use Livewire\Component;
 use App\Models\Pregnancy;
+use App\Models\Childbirth;
+use App\Models\Baby;
 
 class Home extends Component
 {
-    public string  $userName    = '';
-    public ?array  $lastAncVisit = null;
-    public string  $dailyTip    = '';
+    public string $userName       = '';
+    public string $pregnancyStatus = 'tidak hamil'; // 'hamil' | 'melahirkan' | 'tidak hamil'
+
+    public ?array $lastAncVisit   = null;
+    public string $dailyTip       = '';
 
     private const TIPS = [
         'Konsumsi makanan kaya zat besi seperti bayam, kacang-kacangan, dan daging merah untuk mencegah anemia.',
@@ -23,27 +27,46 @@ class Home extends Component
 
     public function mount(): void
     {
-        $user = auth()->user();
-        $this->userName = $user->chUser->fullname ?? $user->name ?? 'Bunda';
+        $user   = auth()->user();
+        $chUser = $user->chUser;
 
-        $latestAnc = Pregnancy::where('id_user', $user->id)
+        $this->userName = $chUser->fullname ?? $user->name ?? 'Bunda';
+
+        // Tentukan status kehamilan
+        $userId    = $user->id;
+        $hasBirth  = Childbirth::where('id_user', $userId)->exists();
+        $hasBaby   = Baby::where('id_user', $userId)->exists();
+
+        if ($hasBirth && $hasBaby) {
+            $this->pregnancyStatus = 'melahirkan';
+        } elseif ($chUser && $chUser->statusPregnant === 'hamil') {
+            $this->pregnancyStatus = 'hamil';
+        } else {
+            $this->pregnancyStatus = 'tidak hamil';
+        }
+
+        // Data ANC terakhir
+        $latestAnc = Pregnancy::where('id_user', $userId)
             ->latest('created_at')
             ->first();
 
         if ($latestAnc) {
+            $diag    = $latestAnc->diagnosis;
+            $daysAgo = (int) $latestAnc->date_pregnancy->diffInDays(now());
+            $visitNo = Pregnancy::where('id_user', $userId)->count();
+
             $this->lastAncVisit = [
                 'date'           => $latestAnc->date_pregnancy->translatedFormat('d F Y'),
                 'gestationalAge' => $latestAnc->gestational_age,
                 'hemoglobin'     => $latestAnc->hemoglobin,
+                'diagKategori'   => $diag['kategori'],
+                'diagWarna'      => $diag['warna'],
+                'visitNumber'    => $visitNo,
+                'daysAgo'        => $daysAgo,
             ];
         }
 
         $this->dailyTip = self::TIPS[date('N') % count(self::TIPS)];
-    }
-
-    public function navigate(string $route): void
-    {
-        $this->redirect(route($route), navigate: true);
     }
 
     public function render()

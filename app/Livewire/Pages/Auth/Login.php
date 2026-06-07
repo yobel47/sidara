@@ -48,7 +48,17 @@ class Login extends Component
 
         RateLimiter::clear($throttleKey);
         request()->session()->regenerate();
-        $this->redirect(route('home'), navigate: true);
+
+        $user   = auth()->user();
+        $chUser = $user->chUser;
+
+        $wasAway     = !$user->last_login_at || $user->last_login_at->lt(now()->subDays(30));
+        $notPregnant = !$chUser || $chUser->statusPregnant !== 'hamil';
+
+        $user->update(['last_login_at' => now()]);
+
+        $destination = ($wasAway && $notPregnant) ? route('perbarui-status') : route('home');
+        $this->redirect($destination, navigate: true);
     }
 
     public function render()

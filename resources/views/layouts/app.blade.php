@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#ec4899">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>{{ $pageTitle }}</title>
     <link rel="manifest" href="/manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -61,6 +61,34 @@
         {{-- BOTTOM NAV — mobile only --}}
         @livewire('layout.bottom-nav')
 
+    </div>
+
+    {{-- Toast global --}}
+    <div x-data="{
+            show: false,
+            message: '',
+            timer: null,
+            fire(msg) {
+                this.message = msg;
+                this.show = true;
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => this.show = false, 5000);
+            }
+        }" @toast.window="fire($event.detail.message)"
+        x-init="@if(session('toast'))fire(@js(session('toast')))@endif"
+        x-show="show"
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2"
+        class="fixed left-1/2 -translate-x-1/2 z-50 lg:bottom-6 "
+        style="bottom: calc(64px + 12px + env(safe-area-inset-bottom, 0px))">
+        <div class="flex items-center gap-2  bg-white  text-sm px-4 py-3 rounded-2xl shadow-lg whitespace-nowrap">
+            <svg class="w-4 h-4 text-green-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
+            <span x-text="message"></span>
+        </div>
     </div>
 
     @livewireScripts

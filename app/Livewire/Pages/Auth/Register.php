@@ -56,6 +56,9 @@ class Register extends Component
 
         Auth::login($user, remember: true);
         request()->session()->regenerate();
+
+        $user->update(['last_login_at' => now()]);
+
         $this->redirect(route('home'), navigate: true);
     }
 
