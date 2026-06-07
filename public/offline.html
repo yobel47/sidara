@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+        />
+        <meta name="theme-color" content="#ec4899" />
+        <title>Tidak Ada Koneksi</title>
+        <style>
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                min-height: 100svh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: #fdf2f8;
+                font-family: "Plus Jakarta Sans", system-ui, -apple-system,
+                    BlinkMacSystemFont, sans-serif;
+                padding: 2rem;
+                text-align: center;
+            }
+            .icon-wrap {
+                width: 64px;
+                height: 64px;
+                border-radius: 16px;
+                background: white;
+                box-shadow: 0 4px 16px rgba(236, 72, 153, 0.12);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1.5rem;
+            }
+            h1 {
+                font-size: 1.25rem;
+                font-weight: 800;
+                color: #1f2937;
+                margin-bottom: 0.5rem;
+            }
+            p {
+                font-size: 0.875rem;
+                color: #9ca3af;
+                line-height: 1.6;
+                margin-bottom: 2rem;
+                max-width: 280px;
+            }
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.875rem 2rem;
+                border-radius: 1rem;
+                background: #ec4899;
+                color: white;
+                font-size: 0.875rem;
+                font-weight: 700;
+                letter-spacing: 0.05em;
+                border: none;
+                cursor: pointer;
+                font-family: inherit;
+                box-shadow: 0 8px 20px rgba(236, 72, 153, 0.25);
+                transition: background 0.15s, transform 0.1s;
+                text-decoration: none;
+            }
+            .btn:hover {
+                background: #db2777;
+            }
+            .btn:active {
+                transform: scale(0.97);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="icon-wrap">
+            <svg
+                width="32"
+                height="32"
+                fill="none"
+                stroke="#f43f5e"
+                stroke-width="1.8"
+                viewBox="0 0 24 24"
+            >
+                <line x1="3" y1="3" x2="21" y2="21" stroke-linecap="round" />
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8.111 6.108A10.535 10.535 0 0 1 12 5.5C17.523 5.5 22 9.25 22 12c0 .98-.312 1.9-.861 2.7M5.5 9.072C3.388 10.05 2 11.41 2 12c0 2.75 4.477 6.5 10 6.5a10.6 10.6 0 0 0 4.359-.904M12 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"
+                />
+            </svg>
+        </div>
+
+        <h1>Tidak Ada Koneksi</h1>
+        <p>Periksa koneksi internet kamu, lalu coba lagi.</p>
+
+        <button class="btn" onclick="location.reload()">
+            <svg
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                />
+            </svg>
+            Coba Lagi
+        </button>
+    </body>
+</html>

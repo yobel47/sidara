@@ -20,6 +20,7 @@ use App\Livewire\Pages\Baby;
 use App\Livewire\Pages\MedicalRecord;
 use App\Livewire\Pages\Profile;
 use App\Livewire\Pages\UpdateStatus;
+use App\Livewire\Pages\Admin;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +34,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/lupa-password', ForgotPassword::class)->name('password.request');
     Route::get('/reset-password/{token}', ResetPassword::class)->name('password.reset');
 });
- 
+
 
 /*
 |--------------------------------------------------------------------------
@@ -64,7 +65,16 @@ Route::middleware(['auth', 'profile.complete'])->group(function () {
     Route::get('/profil',          Profile::class)->name('profil');
     Route::get('/perbarui-status', UpdateStatus::class)->name('perbarui-status');
 });
- 
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN — hanya bisa diakses akun yang emailnya ada di ADMIN_EMAILS
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin', Admin::class)->name('admin');
+});
+
 /*
 |--------------------------------------------------------------------------
 | LOGOUT — POST request, butuh auth
