@@ -3,31 +3,47 @@
 namespace App\Livewire\Pages;
 
 use Livewire\Component;
+use App\Models\Pregnancy;
 
 class Home extends Component
 {
-    public string $userName    = 'Aisyah';
-    public int    $notifCount  = 2;
+    public string  $userName    = '';
+    public ?array  $lastAncVisit = null;
+    public string  $dailyTip    = '';
 
-    // Data dummy — nanti diganti query dari database
-    public ?string $pregnancyWeek = '28';
-    public ?string $ancVisitCount = '4';
-    public ?string $nextVisitDate = '12 Jul';
-    public ?array  $lastAncVisit  = [
-        'date'      => '15 Juni 2025',
-        'bidan'     => 'Bidan Sari',
-        'puskesmas' => 'Puskesmas Menanggal',
+    private const TIPS = [
+        'Konsumsi makanan kaya zat besi seperti bayam, kacang-kacangan, dan daging merah untuk mencegah anemia.',
+        'Minum tablet tambah darah (TTD) setiap hari, terutama malam hari sebelum tidur agar tidak mual.',
+        'Perbanyak konsumsi vitamin C (jeruk, tomat) untuk membantu penyerapan zat besi.',
+        'Istirahat cukup 7–8 jam per malam sangat penting untuk ibu hamil.',
+        'Hindari minum teh atau kopi bersamaan dengan makanan karena menghambat penyerapan zat besi.',
+        'Lakukan kunjungan ANC rutin minimal 6 kali selama kehamilan.',
+        'Konsumsi asam folat sejak awal kehamilan untuk mencegah cacat tabung saraf.',
     ];
-    public ?string $dailyTip = 'Konsumsi makanan kaya zat besi seperti bayam, kacang-kacangan, dan daging merah untuk mencegah anemia selama kehamilan.';
+
+    public function mount(): void
+    {
+        $user = auth()->user();
+        $this->userName = $user->chUser->fullname ?? $user->name ?? 'Bunda';
+
+        $latestAnc = Pregnancy::where('id_user', $user->id)
+            ->latest('created_at')
+            ->first();
+
+        if ($latestAnc) {
+            $this->lastAncVisit = [
+                'date'           => $latestAnc->date_pregnancy->translatedFormat('d F Y'),
+                'gestationalAge' => $latestAnc->gestational_age,
+                'hemoglobin'     => $latestAnc->hemoglobin,
+            ];
+        }
+
+        $this->dailyTip = self::TIPS[date('N') % count(self::TIPS)];
+    }
 
     public function navigate(string $route): void
     {
         $this->redirect(route($route), navigate: true);
-    }
-
-    public function goToNotifications(): void
-    {
-        $this->redirect(route('notifikasi'), navigate: true);
     }
 
     public function render()

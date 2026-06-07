@@ -3,7 +3,7 @@
 <div class="flex flex-col flex-1">
 
     {{-- HEADER (mobile only) --}}
-    <div class="lg:hidden px-5 pt-10 pb-6 bg-gray-50">
+    <div class="lg:hidden px-5 pt-10 pb-6 ">
 
         <a href="{{ route('home') }}" wire:navigate
             class="flex items-center gap-1.5 text-rose-500 text-sm font-semibold mb-4 w-fit active:opacity-70">
