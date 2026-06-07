@@ -16,6 +16,22 @@ class Identity extends Component
     public string $statusPregnant = 'hamil'; // default: hamil
     public string $gestationalAge = '';
 
+    public function mount(): void
+    {
+        // Middleware sudah handle redirect, tapi kalau lolos juga pre-fill form
+        $chUser = auth()->user()->chUser;
+        if ($chUser) {
+            $this->fullname       = $chUser->fullname;
+            $this->address        = $chUser->address;
+            $this->age            = (string) $chUser->age;
+            $this->phone          = $chUser->phone;
+            $this->weight         = (string) $chUser->weight;
+            $this->height         = (string) $chUser->height;
+            $this->statusPregnant = $chUser->statusPregnant;
+            $this->gestationalAge = $chUser->gestationalAge ?? '';
+        }
+    }
+
     public function simpan(): void
     {
         $rules = [
@@ -49,18 +65,19 @@ class Identity extends Component
             'gestationalAge.required' => 'Usia kehamilan wajib diisi.',
         ]);
 
-        // Simpan ke tabel ch_user
-        ChUser::create([
-            'id_user'        => auth()->id(),
-            'fullname'       => $this->fullname,
-            'address'        => $this->address,
-            'age'            => (int) $this->age,
-            'phone'          => $this->phone,
-            'weight'         => (float) $this->weight,
-            'height'         => (float) $this->height,
-            'statusPregnant' => $this->statusPregnant,
-            'gestationalAge' => $this->statusPregnant === 'hamil' ? $this->gestationalAge : null,
-        ]);
+        ChUser::updateOrCreate(
+            ['id_user' => auth()->id()],
+            [
+                'fullname'       => $this->fullname,
+                'address'        => $this->address,
+                'age'            => (int) $this->age,
+                'phone'          => $this->phone,
+                'weight'         => (float) $this->weight,
+                'height'         => (float) $this->height,
+                'statusPregnant' => $this->statusPregnant,
+                'gestationalAge' => $this->statusPregnant === 'hamil' ? $this->gestationalAge : null,
+            ]
+        );
 
         // Setelah simpan → ke home
         $this->redirect(route('home'), navigate: true);

@@ -13,15 +13,17 @@ class Pregnancy extends Component
 
     public function mount(): void
     {
+        // Descending: visit terbaru di index 0
         $visits = PregnancyModel::where('id_user', auth()->id())
-            ->orderBy('date_pregnancy')
+            ->orderByDesc('date_pregnancy')
+            ->orderByDesc('created_at') // untuk jaga-jaga kalau ada 2 visit di hari yang sama
             ->get();
 
         if ($visits->isEmpty()) {
             return;
         }
 
-        $latest      = $visits->last();
+        $latest      = $visits->first(); // terbaru karena desc
         $today       = Carbon::today();
         $lastDate    = Carbon::parse($latest->date_pregnancy);
         $daysElapsed = $lastDate->diffInDays($today);
@@ -47,8 +49,8 @@ class Pregnancy extends Component
             'warnaStatus'        => $diag['warna'],
         ];
 
-        $this->kunjungan = $visits->sortByDesc('date_pregnancy')
-            ->map(function ($v) {
+        // Sudah desc dari query, tinggal map
+        $this->kunjungan = $visits->map(function ($v) {
                 $d = $v->diagnosis;
                 return [
                     'id'            => $v->id_pregnancy,

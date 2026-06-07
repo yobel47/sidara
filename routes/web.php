@@ -39,20 +39,18 @@ Route::middleware('guest')->group(function () {
 | Hanya route identitas yang ada di sini
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'profile.complete'])->group(function () {
     // Identitas pakai layout guest (tidak ada navbar/sidebar)
-    // supaya user fokus isi form ini dulu
     Route::get('/identitas', Identity::class)->name('identitas');
 });
 
 
 /*
 |--------------------------------------------------------------------------
-| AUTH — hanya bisa diakses kalau SUDAH login
-| Kalau belum login → otomatis redirect ke '/login'
+| AUTH — hanya bisa diakses kalau SUDAH login + sudah isi identitas
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'profile.complete'])->group(function () {
     Route::get('/',              Home::class)->name('home');
     Route::get('/skrining-awal', InitialScreening::class)->name('skrining-awal');
     Route::get('/skrining-awal/{id}/hasil', ResultScreening::class)->name('skrining-hasil');

@@ -12,9 +12,17 @@ class ProfileComplete
     {
         $user = auth()->user();
 
-        if ($user && !$user->hasCompletedProfile()) {
-            if (!$request->routeIs('identitas')) {
+        if ($user) {
+            $complete = $user->hasCompletedProfile();
+
+            // Belum isi identitas → paksa ke /identitas
+            if (!$complete && !$request->routeIs('identitas')) {
                 return redirect()->route('identitas');
+            }
+
+            // Sudah isi identitas tapi buka /identitas lagi → ke home
+            if ($complete && $request->routeIs('identitas')) {
+                return redirect()->route('home');
             }
         }
 

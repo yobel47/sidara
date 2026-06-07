@@ -11,7 +11,7 @@
         @php $homeActive =
         $currentRoute = request()->route()->getName();
         // Tentukan route mana saja yang harus dikecualikan
-        $excludedRoutes = ['medical-record', 'profile'];
+        $excludedRoutes = ['rekam-medis', 'profil'];
 
         // Aktif jika route saat ini TIDAK ada di dalam daftar pengecualian
         $homeActive = !in_array($currentRoute, $excludedRoutes);
