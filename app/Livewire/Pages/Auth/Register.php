@@ -14,19 +14,6 @@ class Register extends Component
     public string $password             = '';
     public string $passwordConfirmation = '';
 
-    public bool $showPassword             = false;
-    public bool $showPasswordConfirmation = false;
-
-    public function togglePassword(): void
-    {
-        $this->showPassword = !$this->showPassword;
-    }
-
-    public function togglePasswordConfirmation(): void
-    {
-        $this->showPasswordConfirmation = !$this->showPasswordConfirmation;
-    }
-
     public function register(): void
     {
         $this->validate([
@@ -75,6 +62,6 @@ class Register extends Component
     public function render()
     {
         return view('livewire.pages.auth.register')
-            ->layout('layouts.guest', ['title' => 'Registrasi']);
+            ->layout('layouts.guest', ['pageTitle' => 'Registrasi']);
     }
 }

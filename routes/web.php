@@ -10,6 +10,7 @@ use App\Livewire\Pages\Auth\Register;
 use App\Livewire\Pages\Home;
 use App\Livewire\Pages\Identity;
 use App\Livewire\Pages\InitialScreening;
+use App\Livewire\Pages\ResultScreening;
 use App\Livewire\Pages\Pregnancy;
 use App\Livewire\Pages\Childbirth;
 use App\Livewire\Pages\Baby;
@@ -42,7 +43,7 @@ Route::middleware('auth')->group(function () {
     // supaya user fokus isi form ini dulu
     Route::get('/identitas', Identity::class)->name('identitas');
 });
- 
+
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/',              Home::class)->name('home');
     Route::get('/skrining-awal', InitialScreening::class)->name('skrining-awal');
+    Route::get('/skrining-awal/{id}/hasil', ResultScreening::class)->name('skrining-hasil');
     Route::get('/kehamilan',     Pregnancy::class)->name('kehamilan');
     Route::get('/persalinan',    Childbirth::class)->name('persalinan');
     Route::get('/data-bayi',     Baby::class)->name('data-bayi');

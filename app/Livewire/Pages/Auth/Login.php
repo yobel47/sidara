@@ -9,14 +9,8 @@ use Illuminate\Support\Str;
 
 class Login extends Component
 {
-    public string $username    = ''; // bisa username atau email
+    public string $username = '';
     public string $password = '';
-    public bool   $showPassword = false;
-
-    public function togglePassword(): void
-    {
-        $this->showPassword = !$this->showPassword;
-    }
 
     public function login(): void
     {
@@ -60,6 +54,6 @@ class Login extends Component
     public function render()
     {
         return view('livewire.pages.auth.login')
-            ->layout('layouts.guest', ['title' => 'Login']);
+            ->layout('layouts.guest', ['pageTitle' => 'Login']);
     }
 }
