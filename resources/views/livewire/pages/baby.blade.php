@@ -116,9 +116,9 @@
                 <div class="flex items-center justify-between px-4 py-3.5">
                     <span class="text-sm text-gray-600">Berat Lahir</span>
                     <div class="flex items-center gap-1.5">
-                        <input wire:model="weight" type="number" min="0.5" max="10" step="0.01" placeholder="0.00"
-                            class="w-16 text-sm text-gray-800 font-medium text-right border-none outline-none bg-transparent" />
-                        <span class="text-sm text-gray-400">kg</span>
+                        <input wire:model="weight" type="number" min="500" max="10000" step="1" placeholder="3500"
+                            class="w-20 text-sm text-gray-800 font-medium text-right border-none outline-none bg-transparent" />
+                        <span class="text-sm text-gray-400">gram</span>
                     </div>
                 </div>
                 @error('weight')

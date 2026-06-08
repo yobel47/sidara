@@ -59,7 +59,7 @@ class Baby extends Component
         $this->dateBirth = $existing->date_birth->format('Y-m-d');
         // DB menyimpan H:i:s, validasi butuh H:i — ambil 5 karakter pertama
         $this->timeBirth = $existing->time_birth ? substr($existing->time_birth, 0, 5) : '';
-        $this->weight    = (string) $existing->weight;
+        $this->weight    = (string) round($existing->weight * 1000);
         $this->height    = (string) $existing->height;
         $this->mode      = 'form';
     }
@@ -71,7 +71,7 @@ class Baby extends Component
             'gender'    => 'required|in:Laki-laki,Perempuan',
             'dateBirth' => 'required|date',
             'timeBirth' => 'nullable|date_format:H:i',
-            'weight'    => 'required|numeric|min:0.5|max:10',
+            'weight'    => 'required|numeric|min:500|max:10000',
             'height'    => 'required|numeric|min:20|max:70',
         ], [
             'name.required'         => 'Nama bayi wajib diisi.',
@@ -83,8 +83,8 @@ class Baby extends Component
             'timeBirth.date_format' => 'Format waktu lahir tidak valid (contoh: 14:30).',
             'weight.required'       => 'Berat lahir wajib diisi.',
             'weight.numeric'        => 'Berat lahir harus berupa angka.',
-            'weight.min'            => 'Berat lahir minimal 0,5 kg.',
-            'weight.max'            => 'Berat lahir maksimal 10 kg.',
+            'weight.min'            => 'Berat lahir minimal 500 gram.',
+            'weight.max'            => 'Berat lahir maksimal 10.000 gram.',
             'height.required'       => 'Panjang badan wajib diisi.',
             'height.numeric'        => 'Panjang badan harus berupa angka.',
             'height.min'            => 'Panjang badan minimal 20 cm.',
@@ -96,7 +96,7 @@ class Baby extends Component
             'gender'     => $this->gender,
             'date_birth' => $this->dateBirth,
             'time_birth' => $this->timeBirth ?: null,
-            'weight'     => (float) $this->weight,
+            'weight'     => (float) $this->weight / 1000,
             'height'     => (float) $this->height,
         ];
 
@@ -121,7 +121,7 @@ class Baby extends Component
             'waktu'     => $record->time_birth
                 ? \Carbon\Carbon::createFromFormat('H:i:s', $record->time_birth)->format('H:i') . ' WIB'
                 : '-',
-            'weight'    => number_format($record->weight, 2) . ' kg',
+            'weight'    => number_format($record->weight * 1000, 0, ',', '.') . ' gram',
             'height'    => number_format($record->height, 1) . ' cm',
         ];
     }

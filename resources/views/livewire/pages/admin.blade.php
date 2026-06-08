@@ -446,7 +446,7 @@
                             @endif
                             <div>
                                 <p class="text-xs text-gray-400">Berat Lahir</p>
-                                <p class="font-semibold text-gray-800 text-sm">{{ $b->weight }} kg</p>
+                                <p class="font-semibold text-gray-800 text-sm">{{ number_format($b->weight * 1000, 0, ',', '.') }} gram</p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-400">Panjang Lahir</p>

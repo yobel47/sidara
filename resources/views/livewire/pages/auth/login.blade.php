@@ -5,6 +5,9 @@
     {{-- HEADER --}}
     <div class="flex items-start justify-between mb-6">
         <div>
+            <p class="text-[10px] font-bold text-rose-300 tracking-widest uppercase mb-2">
+                Sistem Deteksi Anemia Remaja
+            </p>
             <h1 class="text-2xl font-extrabold text-rose-500 leading-tight">Login</h1>
             <p class="text-sm text-gray-400 mt-1">Masuk ke akun Anda</p>
         </div>

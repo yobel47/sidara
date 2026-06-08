@@ -9,26 +9,29 @@
         </div>
         <div>
             <p class="text-sm font-extrabold text-gray-900 leading-none">SI DARA</p>
-            <p class="text-xs text-gray-400 mt-0.5">Kesehatan Ibu & Bayi</p>
+            <p class="text-xs text-gray-400 mt-0.5">Sistem Deteksi Anemia Remaja</p>
         </div>
     </div>
 
     @php
     $items = [
-        ['route'=>'home',         'label'=>'Beranda',      'icon'=>'home',      'active'=>['home'],                            'pregnancyOnly'=>false],
-        ['route'=>'skrining-awal','label'=>'Skrining Awal','icon'=>'search',    'active'=>['skrining-awal','skrining-hasil'],   'pregnancyOnly'=>false],
-        ['route'=>'kehamilan',    'label'=>'Kehamilan',    'icon'=>'heart',     'active'=>['kehamilan','anc-visit'],            'pregnancyOnly'=>true],
-        ['route'=>'persalinan',   'label'=>'Persalinan',   'icon'=>'baby',      'active'=>['persalinan'],                       'pregnancyOnly'=>true],
-        ['route'=>'data-bayi',    'label'=>'Data Bayi',    'icon'=>'face',      'active'=>['data-bayi'],                        'pregnancyOnly'=>true],
-        ['route'=>'rekam-medis',  'label'=>'Rekam Medis',  'icon'=>'clipboard', 'active'=>['rekam-medis'],                      'pregnancyOnly'=>false],
+    ['route'=>'home', 'label'=>'Beranda', 'icon'=>'home', 'active'=>['home'], 'pregnancyOnly'=>false],
+    ['route'=>'skrining-awal','label'=>'Skrining Awal','icon'=>'search', 'active'=>['skrining-awal','skrining-hasil'],
+    'pregnancyOnly'=>false],
+    ['route'=>'kehamilan', 'label'=>'Kehamilan', 'icon'=>'heart', 'active'=>['kehamilan','anc-visit'],
+    'pregnancyOnly'=>true],
+    ['route'=>'persalinan', 'label'=>'Persalinan', 'icon'=>'baby', 'active'=>['persalinan'], 'pregnancyOnly'=>true],
+    ['route'=>'data-bayi', 'label'=>'Data Bayi', 'icon'=>'face', 'active'=>['data-bayi'], 'pregnancyOnly'=>true],
+    ['route'=>'rekam-medis', 'label'=>'Rekam Medis', 'icon'=>'clipboard', 'active'=>['rekam-medis'],
+    'pregnancyOnly'=>false],
     ];
     @endphp
 
     <nav class="flex-1 space-y-0.5 mt-2">
         @foreach($items as $item)
         @php
-            $active = request()->routeIs($item['active']);
-            $hidden = $item['pregnancyOnly'] && $pregnancyStatus === 'tidak hamil';
+        $active = request()->routeIs($item['active']);
+        $hidden = $item['pregnancyOnly'] && $pregnancyStatus === 'tidak hamil';
         @endphp
         @if($hidden) @continue @endif
         <a href="{{ route($item['route']) }}" wire:navigate class="flex !mb-1 items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors
