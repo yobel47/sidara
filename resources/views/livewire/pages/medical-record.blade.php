@@ -118,7 +118,7 @@
         {{-- ── TIMELINE ── --}}
         <p class="text-sm font-bold text-rose-500 uppercase tracking-wider">Timeline</p>
 
-        @if(!$skrining && count($kunjunganAnc) === 0 && !$persalinan && !$bayi)
+        @if(!$skrining && count($kunjunganAnc) === 0 && !$persalinan && empty($bayi))
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center">
             <div class="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -147,7 +147,7 @@
             {{-- Skrining Awal --}}
             @if($skrining)
             <a href="{{ route('skrining-hasil', $skrining['id']) }}" wire:navigate
-                class="flex items-center gap-3 px-4 py-3.5 {{ (count($kunjunganAnc) > 0 || $persalinan || $bayi) ? 'border-b border-gray-50' : '' }} active:bg-gray-50 transition-colors">
+                class="flex items-center gap-3 px-4 py-3.5 {{ (count($kunjunganAnc) > 0 || $persalinan || !empty($bayi)) ? 'border-b border-gray-50' : '' }} active:bg-gray-50 transition-colors">
                 <div class="w-10 h-10 bg-rose-50 rounded-full flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5 text-rose-400" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2C8 2 4 7 4 12c0 4 3.5 8 8 8s8-4 8-8c0-5-4-10-8-10z" />
@@ -169,7 +169,7 @@
 
             {{-- Kunjungan ANC — selalu terbuka --}}
             @if(count($kunjunganAnc) > 0)
-            <div class="{{ $persalinan || $bayi ? 'border-b border-gray-50' : '' }}">
+            <div class="{{ $persalinan || !empty($bayi) ? 'border-b border-gray-50' : '' }}">
 
                 {{-- Header ANC (tidak bisa ditutup) --}}
                 <div class="flex items-center gap-3 px-4 py-3.5 border-b border-gray-50">
@@ -238,7 +238,7 @@
             @endif
 
             {{-- Data Bayi --}}
-            @if($bayi)
+            @if(!empty($bayi))
             <a href="{{ route('data-bayi') }}" wire:navigate
                 class="flex items-center gap-3 px-4 py-3.5 active:bg-gray-50 transition-colors">
                 <div class="w-10 h-10 bg-amber-50 rounded-full flex items-center justify-center shrink-0">
@@ -249,11 +249,24 @@
                     </svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="text-sm font-bold text-gray-800">Data Bayi</p>
-                    <p class="text-xs text-gray-400 mt-0.5">{{ $bayi['name'] }}, {{ $bayi['weight'] }}</p>
+                    <p class="text-sm font-bold text-gray-800">
+                        Data Bayi
+                        @if(count($bayi) > 1)
+                        <span class="ml-1 text-xs font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-600">
+                            {{ count($bayi) }}
+                        </span>
+                        @endif
+                    </p>
+                    @if(count($bayi) === 1)
+                    <p class="text-xs text-gray-400 mt-0.5">{{ $bayi[0]['name'] }}, {{ $bayi[0]['weight'] }}</p>
+                    @else
+                    <p class="text-xs text-gray-400 mt-0.5">
+                        {{ collect($bayi)->pluck('name')->implode(' & ') }}
+                    </p>
+                    @endif
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
-                    <span class="text-xs text-gray-400">{{ $bayi['tanggal'] }}</span>
+                    <span class="text-xs text-gray-400">{{ $bayi[0]['tanggal'] }}</span>
                     <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" stroke-width="2.5"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />

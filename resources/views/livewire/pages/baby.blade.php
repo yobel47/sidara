@@ -56,7 +56,9 @@
         @if($mode === 'form')
 
         {{-- ── FORM MODE ── --}}
-        <p class="text-sm font-bold text-sky-600 uppercase tracking-wider">Data Bayi</p>
+        <p class="text-sm font-bold text-sky-600 uppercase tracking-wider">
+            {{ $editId ? 'Edit Data Bayi' : 'Tambah Data Bayi' }}
+        </p>
 
         <div class="bg-white rounded-2xl border border-sky-100 shadow-sm overflow-hidden">
 
@@ -158,68 +160,102 @@
             <span wire:loading wire:target="simpan">Menyimpan...</span>
         </button>
 
+        {{-- Tombol Batal --}}
+        <button wire:click="batal" class="w-full py-3.5 rounded-2xl border-2 border-sky-200 hover:border-sky-400
+                           text-sky-500 hover:text-sky-600 font-bold text-sm tracking-wider
+                           transition-all active:scale-[0.98]">
+            Batal
+        </button>
+
         @else
 
-        {{-- ── VIEW MODE ── --}}
-        <p class="text-sm font-bold text-sky-600 uppercase tracking-wider">Data Bayi</p>
+        {{-- ── LIST MODE ── --}}
+        <p class="text-sm font-bold text-sky-600 uppercase tracking-wider">
+            {{ $babies->count() > 1 ? 'Data Bayi (' . $babies->count() . ')' : 'Data Bayi' }}
+        </p>
+
+        @forelse($babies as $index => $baby)
+        @php
+            $isLaki = $baby->gender === 'Laki-laki';
+        @endphp
 
         <div class="bg-white rounded-2xl border border-sky-100 shadow-sm overflow-hidden">
 
-            {{-- Nama --}}
+            {{-- Header kartu bayi --}}
             <div class="flex items-center justify-between px-4 py-3.5 border-b border-gray-50">
-                <span class="text-sm text-gray-500">Nama Bayi</span>
-                <span class="text-sm font-bold text-gray-800">{{ $viewData['name'] }}</span>
-            </div>
-
-            {{-- Jenis Kelamin --}}
-            <div class="flex items-center justify-between px-4 py-3.5 border-b border-gray-50">
-                <span class="text-sm text-gray-500">Jenis Kelamin</span>
-                @php
-                    $genderColor = $viewData['gender'] === 'Laki-laki'
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'bg-pink-100 text-pink-700';
-                    $genderIcon  = $viewData['gender'] === 'Laki-laki' ? '♂' : '♀';
-                @endphp
-                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full {{ $genderColor }}">
-                    {{ $genderIcon }} {{ $viewData['gender'] }}
+                <div class="flex items-center gap-2.5">
+                    @if($babies->count() > 1)
+                    <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-600">
+                        Bayi {{ $index + 1 }}
+                    </span>
+                    @endif
+                    <span class="font-bold text-gray-800">{{ $baby->name }}</span>
+                </div>
+                <span class="text-xs font-bold px-2.5 py-0.5 rounded-full {{ $isLaki ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700' }}">
+                    {{ $isLaki ? '♂' : '♀' }} {{ $baby->gender }}
                 </span>
             </div>
 
-            {{-- Tanggal Lahir --}}
-            <div class="flex items-center justify-between px-4 py-3.5 border-b border-gray-50">
-                <span class="text-sm text-gray-500">Tanggal Lahir</span>
-                <span class="text-sm font-semibold text-gray-800">{{ $viewData['tanggal'] }}</span>
+            {{-- Detail --}}
+            <div class="divide-y divide-gray-50">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <span class="text-sm text-gray-500">Tanggal Lahir</span>
+                    <span class="text-sm font-semibold text-gray-800">
+                        {{ $baby->date_birth->translatedFormat('d F Y') }}
+                    </span>
+                </div>
+
+                @if($baby->time_birth)
+                <div class="flex items-center justify-between px-4 py-3">
+                    <span class="text-sm text-gray-500">Waktu Lahir</span>
+                    <span class="text-sm font-semibold text-gray-800">
+                        {{ substr($baby->time_birth, 0, 5) }} WIB
+                    </span>
+                </div>
+                @endif
+
+                <div class="flex items-center justify-between px-4 py-3">
+                    <span class="text-sm text-gray-500">Berat Lahir</span>
+                    <span class="text-sm font-semibold text-gray-800">
+                        {{ number_format($baby->weight * 1000, 0, ',', '.') }} gram
+                    </span>
+                </div>
+
+                <div class="flex items-center justify-between px-4 py-3">
+                    <span class="text-sm text-gray-500">Panjang Badan</span>
+                    <span class="text-sm font-semibold text-gray-800">{{ $baby->height }} cm</span>
+                </div>
             </div>
 
-            {{-- Waktu Lahir --}}
-            <div class="flex items-center justify-between px-4 py-3.5 border-b border-gray-50">
-                <span class="text-sm text-gray-500">Waktu Lahir</span>
-                <span class="text-sm font-semibold text-gray-800">{{ $viewData['waktu'] }}</span>
-            </div>
-
-            {{-- Berat Lahir --}}
-            <div class="flex items-center justify-between px-4 py-3.5 border-b border-gray-50">
-                <span class="text-sm text-gray-500">Berat Lahir</span>
-                <span class="text-sm font-semibold text-gray-800">{{ $viewData['weight'] }}</span>
-            </div>
-
-            {{-- Panjang Badan --}}
-            <div class="flex items-center justify-between px-4 py-3.5">
-                <span class="text-sm text-gray-500">Panjang Badan</span>
-                <span class="text-sm font-semibold text-gray-800">{{ $viewData['height'] }}</span>
+            {{-- Tombol Edit --}}
+            <div class="px-4 py-3 border-t border-gray-50">
+                <button wire:click="edit({{ $baby->id_baby }})" class="w-full py-2.5 rounded-xl border-2 border-sky-200 hover:border-sky-400
+                                   text-sky-500 hover:text-sky-600 font-bold text-sm
+                                   transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
+                    </svg>
+                    Edit Data
+                </button>
             </div>
 
         </div>
+        @empty
+        <div class="bg-white rounded-2xl border border-sky-100 shadow-sm p-10 text-center">
+            <p class="text-gray-400 text-sm">Belum ada data bayi.</p>
+        </div>
+        @endforelse
 
-        {{-- Tombol Edit --}}
-        <button wire:click="edit" class="w-full py-3.5 rounded-2xl border-2 border-sky-200 hover:border-sky-400
-                           text-sky-500 hover:text-sky-600 font-bold text-sm tracking-wider
-                           transition-all active:scale-[0.98] flex items-center justify-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
+        {{-- Tombol Tambah Bayi --}}
+        <button wire:click="tambah" class="w-full py-4 rounded-2xl bg-sky-500 hover:bg-sky-600 active:scale-[0.98]
+                           text-white font-extrabold text-sm tracking-widest uppercase
+                           shadow-lg shadow-sky-200 transition-all
+                           flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Edit Data
+            Tambah Bayi
         </button>
 
         @endif

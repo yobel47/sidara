@@ -14,7 +14,7 @@ class MedicalRecord extends Component
     public ?array $skrining     = null;
     public array  $kunjunganAnc = [];
     public ?array $persalinan   = null;
-    public ?array $bayi         = null;
+    public array  $bayi         = [];
 
     public function mount(): void
     {
@@ -23,13 +23,16 @@ class MedicalRecord extends Component
         $screening   = Screening::where('id_user', $userId)->latest()->first();
         $pregnancies = Pregnancy::where('id_user', $userId)->orderBy('date_pregnancy')->get();
         $childbirth  = Childbirth::where('id_user', $userId)->first();
-        $baby        = Baby::where('id_user', $userId)->first();
+        $babies      = Baby::where('id_user', $userId)->orderBy('date_birth')->orderBy('time_birth')->get();
 
         $this->ringkasan = [
             'jumlahAnc'       => $pregnancies->count(),
             'adaPersalinan'   => $childbirth !== null,
             'tanggalSkrining' => $screening ? $screening->created_at->translatedFormat('d M Y') : null,
-            'tanggalBayi'     => $baby ? $baby->date_birth->translatedFormat('d M Y') : null,
+            'tanggalBayi'     => $babies->isNotEmpty()
+                ? $babies->first()->date_birth->translatedFormat('d M Y')
+                    . ($babies->count() > 1 ? ' · ' . $babies->count() . ' bayi' : '')
+                : null,
         ];
 
         if ($screening) {
@@ -58,15 +61,13 @@ class MedicalRecord extends Component
             ];
         }
 
-        if ($baby) {
-            $this->bayi = [
-                'name'    => $baby->name,
-                'gender'  => $baby->gender,
-                'tanggal' => $baby->date_birth->translatedFormat('d F Y'),
-                'weight'  => number_format($baby->weight * 1000, 0, ',', '.') . ' gram',
-                'height'  => number_format($baby->height, 1) . ' cm',
-            ];
-        }
+        $this->bayi = $babies->map(fn($b) => [
+            'name'    => $b->name,
+            'gender'  => $b->gender,
+            'tanggal' => $b->date_birth->translatedFormat('d F Y'),
+            'weight'  => number_format($b->weight * 1000, 0, ',', '.') . ' gram',
+            'height'  => number_format($b->height, 1) . ' cm',
+        ])->toArray();
     }
 
     public function render()

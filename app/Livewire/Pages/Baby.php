@@ -8,17 +8,16 @@ use App\Models\Childbirth;
 
 class Baby extends Component
 {
-    public string  $mode     = 'form'; // 'form' | 'view'
-    public ?int    $recordId = null;
-    public ?array  $viewData = null;
+    public string $mode   = 'list'; // 'list' | 'form'
+    public ?int   $editId = null;
 
     // Form fields
-    public string $name        = '';
-    public string $gender      = 'Laki-laki';
-    public string $dateBirth   = '';
-    public string $timeBirth   = '';
-    public string $weight      = '';
-    public string $height      = '';
+    public string $name      = '';
+    public string $gender    = 'Laki-laki';
+    public string $dateBirth = '';
+    public string $timeBirth = '';
+    public string $weight    = '';
+    public string $height    = '';
 
     private function isNotPregnant(): bool
     {
@@ -37,31 +36,49 @@ class Baby extends Component
             return;
         }
 
-        $existing = BabyModel::where('id_user', auth()->id())->first();
-
-        if ($existing) {
-            $this->mode     = 'view';
-            $this->recordId = $existing->id_baby;
-            $this->viewData = $this->toViewData($existing);
-            return;
+        // Langsung buka form kalau belum ada bayi sama sekali
+        if (BabyModel::where('id_user', auth()->id())->doesntExist()) {
+            $this->mode      = 'form';
+            $this->dateBirth = now()->format('Y-m-d');
         }
-
-        $this->dateBirth = now()->format('Y-m-d');
     }
 
-    public function edit(): void
+    public function tambah(): void
     {
-        $existing = BabyModel::find($this->recordId);
+        $this->editId    = null;
+        $this->name      = '';
+        $this->gender    = 'Laki-laki';
+        $this->dateBirth = now()->format('Y-m-d');
+        $this->timeBirth = '';
+        $this->weight    = '';
+        $this->height    = '';
+        $this->resetErrorBag();
+        $this->mode = 'form';
+    }
+
+    public function edit(int $babyId): void
+    {
+        $existing = BabyModel::where('id_baby', $babyId)
+            ->where('id_user', auth()->id())
+            ->first();
         if (!$existing) return;
 
+        $this->editId    = $babyId;
         $this->name      = $existing->name;
         $this->gender    = $existing->gender;
         $this->dateBirth = $existing->date_birth->format('Y-m-d');
-        // DB menyimpan H:i:s, validasi butuh H:i — ambil 5 karakter pertama
         $this->timeBirth = $existing->time_birth ? substr($existing->time_birth, 0, 5) : '';
         $this->weight    = (string) round($existing->weight * 1000);
         $this->height    = (string) $existing->height;
-        $this->mode      = 'form';
+        $this->resetErrorBag();
+        $this->mode = 'form';
+    }
+
+    public function batal(): void
+    {
+        $this->editId = null;
+        $this->mode   = 'list';
+        $this->resetErrorBag();
     }
 
     public function simpan(): void
@@ -100,35 +117,28 @@ class Baby extends Component
             'height'     => (float) $this->height,
         ];
 
-        if ($this->recordId) {
-            BabyModel::where('id_baby', $this->recordId)->update($data);
+        if ($this->editId) {
+            BabyModel::where('id_baby', $this->editId)
+                ->where('id_user', auth()->id())
+                ->update($data);
+            $msg = 'Data bayi berhasil diperbarui.';
         } else {
-            $record         = BabyModel::create(['id_user' => auth()->id()] + $data);
-            $this->recordId = $record->id_baby;
+            BabyModel::create(['id_user' => auth()->id()] + $data);
+            $msg = 'Data bayi berhasil disimpan.';
         }
 
-        $this->viewData = $this->toViewData(BabyModel::find($this->recordId));
-        $this->mode     = 'view';
-        $this->dispatch('toast', message: 'Data bayi berhasil disimpan.');
-    }
-
-    private function toViewData(BabyModel $record): array
-    {
-        return [
-            'name'      => $record->name,
-            'gender'    => $record->gender,
-            'tanggal'   => $record->date_birth->translatedFormat('d F Y'),
-            'waktu'     => $record->time_birth
-                ? \Carbon\Carbon::createFromFormat('H:i:s', $record->time_birth)->format('H:i') . ' WIB'
-                : '-',
-            'weight'    => number_format($record->weight * 1000, 0, ',', '.') . ' gram',
-            'height'    => number_format($record->height, 1) . ' cm',
-        ];
+        $this->editId = null;
+        $this->mode   = 'list';
+        $this->dispatch('toast', message: $msg);
     }
 
     public function render()
     {
-        return view('livewire.pages.baby')
+        $babies = $this->mode === 'list'
+            ? BabyModel::where('id_user', auth()->id())->orderBy('date_birth')->get()
+            : collect();
+
+        return view('livewire.pages.baby', ['babies' => $babies])
             ->layout('layouts.app', ['pageTitle' => 'Data Bayi']);
     }
 }

@@ -223,8 +223,8 @@
             <div class="px-6 border-b border-gray-100 flex gap-1 shrink-0 overflow-x-auto">
                 @foreach([
                 'profil' => 'Profil',
-                'anc' => 'Kunjungan ANC',
                 'skrining' => 'Skrining',
+                'anc' => 'Kunjungan ANC',
                 'persalinan' => 'Persalinan',
                 'bayi' => 'Bayi',
                 ] as $key => $label)
