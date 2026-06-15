@@ -53,37 +53,8 @@
     @livewireStyles
 
     {{-- JSON-LD Structured Data --}}
-    @php
-    $structuredData = json_encode([
-    '@context' => 'https://schema.org',
-    '@type' => 'SoftwareApplication',
-    'name' => 'SI DARA',
-    'alternateName' => 'Sistem Deteksi Anemia Remaja',
-    'description' => 'Aplikasi kesehatan digital untuk deteksi dini anemia pada remaja dan ibu hamil. Fitur skrining
-    anemia, kunjungan ANC, rekam persalinan, dan data bayi.',
-    'url' => url('/'),
-    'applicationCategory' => 'HealthApplication',
-    'operatingSystem' => 'Web, Android, iOS',
-    'inLanguage' => 'id',
-    'offers' => [
-    '@type' => 'Offer',
-    'price' => '0',
-    'priceCurrency' => 'IDR',
-    ],
-    'featureList' => [
-    'Skrining deteksi anemia',
-    'Kunjungan Antenatal Care (ANC)',
-    'Rekam medis persalinan',
-    'Data bayi baru lahir',
-    'Rekam medis lengkap',
-    ],
-    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    @endphp
-    <script type="application/ld+json">
-    {
-        !!$structuredData!!
-    }
-    </script>
+    <script type="application/ld+json">@php echo json_encode(['@context'=>'https://schema.org','@type'=>'SoftwareApplication','name'=>'SI DARA','alternateName'=>'Sistem Deteksi Anemia Remaja','description'=>'Aplikasi kesehatan digital untuk deteksi dini anemia pada remaja dan ibu hamil. Fitur skrining anemia, kunjungan ANC, rekam persalinan, dan data bayi.','url'=>url('/'), 'applicationCategory'=>'HealthApplication','operatingSystem'=>'Web, Android, iOS','inLanguage'=>'id','offers'=>['@type'=>'Offer','price'=>'0','priceCurrency'=>'IDR'],'featureList'=>['Skrining deteksi anemia','Kunjungan Antenatal Care (ANC)','Rekam medis persalinan','Data bayi baru lahir','Rekam medis lengkap']], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); @endphp</script>
+
 </head>
 
 <body class="bg-white" style="font-family: 'Plus Jakarta Sans', sans-serif;">
