@@ -9,6 +9,7 @@ use App\Livewire\Pages\Auth\ForgotPassword;
 use App\Livewire\Pages\Auth\ResetPassword;
 
 // Pages
+use App\Livewire\Pages\Landing;
 use App\Livewire\Pages\Home;
 use App\Livewire\Pages\Identity;
 use App\Livewire\Pages\InitialScreening;
@@ -21,6 +22,15 @@ use App\Livewire\Pages\MedicalRecord;
 use App\Livewire\Pages\Profile;
 use App\Livewire\Pages\UpdateStatus;
 use App\Livewire\Pages\Admin;
+
+/*
+|--------------------------------------------------------------------------
+| PUBLIC — halaman depan, bisa diakses siapapun
+| Kalau sudah login → Landing::mount() redirect ke beranda
+|--------------------------------------------------------------------------
+*/
+Route::get('/', Landing::class)->name('landing');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -38,33 +48,33 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| AUTH — sudah login, tapi BELUM tentu isi identitas
-| Hanya route identitas yang ada di sini
+| AUTH — sudah login, belum tentu isi identitas
+| Halaman identitas tidak butuh profile.complete (justru tujuan redirect-nya)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'profile.complete'])->group(function () {
-    // Identitas pakai layout guest (tidak ada navbar/sidebar)
+Route::middleware(['auth'])->group(function () {
     Route::get('/identitas', Identity::class)->name('identitas');
 });
 
 
 /*
 |--------------------------------------------------------------------------
-| AUTH — hanya bisa diakses kalau SUDAH login + sudah isi identitas
+| AUTH — sudah login + sudah isi identitas
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'profile.complete'])->group(function () {
-    Route::get('/',              Home::class)->name('home');
-    Route::get('/skrining-awal', InitialScreening::class)->name('skrining-awal');
+    Route::get('/beranda',                  Home::class)->name('home');
+    Route::get('/skrining-awal',            InitialScreening::class)->name('skrining-awal');
     Route::get('/skrining-awal/{id}/hasil', ResultScreening::class)->name('skrining-hasil');
-    Route::get('/kehamilan',                  Pregnancy::class)->name('kehamilan');
-    Route::get('/kehamilan/kunjungan-baru',   AncVisit::class)->name('anc-visit');
-    Route::get('/persalinan',    Childbirth::class)->name('persalinan');
-    Route::get('/data-bayi',     Baby::class)->name('data-bayi');
-    Route::get('/rekam-medis',     MedicalRecord::class)->name('rekam-medis');
-    Route::get('/profil',          Profile::class)->name('profil');
-    Route::get('/perbarui-status', UpdateStatus::class)->name('perbarui-status');
+    Route::get('/kehamilan',                Pregnancy::class)->name('kehamilan');
+    Route::get('/kehamilan/kunjungan-baru', AncVisit::class)->name('anc-visit');
+    Route::get('/persalinan',               Childbirth::class)->name('persalinan');
+    Route::get('/data-bayi',                Baby::class)->name('data-bayi');
+    Route::get('/rekam-medis',              MedicalRecord::class)->name('rekam-medis');
+    Route::get('/profil',                   Profile::class)->name('profil');
+    Route::get('/perbarui-status',          UpdateStatus::class)->name('perbarui-status');
 });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -75,14 +85,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin', Admin::class)->name('admin');
 });
 
+
 /*
 |--------------------------------------------------------------------------
-| LOGOUT — POST request, butuh auth
+| LOGOUT — GET request, butuh auth
 |--------------------------------------------------------------------------
 */
 Route::get('/logout', function () {
     auth()->logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-    return redirect()->route('login');
+    return redirect()->route('landing');
 })->middleware('auth')->name('logout');
