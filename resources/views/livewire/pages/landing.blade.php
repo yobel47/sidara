@@ -93,11 +93,6 @@
                     </div>
                     <div class="w-px h-8 bg-gray-200"></div>
                     <div class="text-center lg:text-left">
-                        <p class="text-xl font-extrabold text-gray-800">PWA</p>
-                        <p class="text-xs text-gray-400">Bisa Offline</p>
-                    </div>
-                    <div class="w-px h-8 bg-gray-200"></div>
-                    <div class="text-center lg:text-left">
                         <p class="text-xl font-extrabold text-gray-800">5 Fitur</p>
                         <p class="text-xs text-gray-400">Lengkap</p>
                     </div>
