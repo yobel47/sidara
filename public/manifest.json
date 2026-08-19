@@ -1,7 +1,7 @@
 {
     "name": "SI DARA",
     "short_name": "SI DARA",
-    "description": "Aplikasi pemantauan kesehatan ibu hamil",
+    "description": "Sistem Deteksi Anemia Remaja",
     "lang": "id",
     "start_url": "/",
     "scope": "/",
