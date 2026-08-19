@@ -153,7 +153,6 @@
             </div>
             @endforeach
         </div>
-        @endif
         <a href="{{ route('anc-visit') }}" wire:navigate class="hidden lg:flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-violet-600 hover:bg-violet-700
                    text-white font-extrabold text-sm tracking-widest uppercase
                    shadow-lg shadow-violet-200 transition-all active:scale-[0.98]">
@@ -162,6 +161,7 @@
             </svg>
             Tambah Kunjungan
         </a>
+        @endif
     </div>
 
     {{-- TOMBOL TAMBAH (fixed bottom, hanya tampil jika sudah ada kunjungan) --}}

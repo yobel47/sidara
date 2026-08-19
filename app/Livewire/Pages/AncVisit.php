@@ -57,7 +57,10 @@ class AncVisit extends Component
     {
         $hb = (float) $this->hemoglobin;
         if ($hb > 0) {
-            $this->preview = (new Pregnancy(['hemoglobin' => $hb]))->diagnosis;
+            $this->preview = (new Pregnancy([
+                'hemoglobin'      => $hb,
+                'gestational_age' => (int) ($this->gestationalAge ?: 0),
+            ]))->diagnosis;
         } else {
             $this->preview = null;
         }

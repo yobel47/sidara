@@ -9,10 +9,12 @@ use App\Models\Baby;
 class Sidebar extends Component
 {
     public string $pregnancyStatus = 'tidak hamil';
+    public bool   $isAdmin         = false;
 
     public function mount(): void
     {
         $this->resolveStatus();
+        $this->isAdmin = (bool) auth()->user()->is_admin;
     }
 
     public function logout(): void

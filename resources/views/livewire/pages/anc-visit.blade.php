@@ -84,7 +84,7 @@
                     <div class="flex items-center gap-1.5">
                         <input wire:model.live.debounce.500ms="hemoglobin" type="number" min="1" max="25" step="0.1"
                             placeholder="0"
-                            class="w-14 text-sm text-gray-800 font-medium text-right border-none outline-none bg-transparent" />
+                            class="w-20 text-sm text-gray-800 font-medium text-right border-none outline-none bg-transparent" />
                         <span class="text-sm text-gray-400">g/dL</span>
 
                     </div>

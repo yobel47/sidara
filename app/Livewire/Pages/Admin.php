@@ -13,13 +13,34 @@ class Admin extends Component
 
     public string $search        = '';
     public ?int   $selectedUserId = null;
+    public string $adminNotice   = '';
 
     public function mount(): void
     {
-        $allowed = array_filter(array_map('trim', explode(',', env('ADMIN_EMAILS', ''))));
-
-        if (empty($allowed) || !in_array(auth()->user()->email, $allowed)) {
+        if (!auth()->user()->is_admin) {
             abort(403, 'Akses ditolak.');
+        }
+    }
+
+    public function toggleAdmin(int $userId): void
+    {
+        if ($userId === auth()->id()) {
+            $this->adminNotice = 'Tidak bisa mengubah status admin akun sendiri.';
+            return;
+        }
+
+        $user = User::findOrFail($userId);
+
+        if ($user->is_admin) {
+            if (User::where('is_admin', true)->count() <= 1) {
+                $this->adminNotice = 'Minimal harus ada satu admin yang tersisa.';
+                return;
+            }
+            $user->update(['is_admin' => false]);
+            $this->adminNotice = "{$user->name} tidak lagi menjadi admin.";
+        } else {
+            $user->update(['is_admin' => true]);
+            $this->adminNotice = "{$user->name} sekarang menjadi admin.";
         }
     }
 

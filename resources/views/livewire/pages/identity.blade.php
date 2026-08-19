@@ -21,7 +21,11 @@
         padding-bottom desktop: cukup normal karena tidak ada fixed nav
     --}}
     <div class="flex-1 px-5 pt-6 pb-4 space-y-5 lg:max-w-2xl lg:mx-auto lg:w-full"
-         x-data="{ status: $wire.entangle('statusPregnant') }">
+         x-data="{
+            status: $wire.entangle('statusPregnant'),
+            marital: $wire.entangle('maritalStatus'),
+            dispensasi: $wire.entangle('isDispensationMarriage'),
+         }">
 
         {{-- Nama Lengkap --}}
         <div>
@@ -117,6 +121,65 @@
                 <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                 @enderror
             </div>
+        </div>
+
+        {{-- Status Pernikahan --}}
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Status Pernikahan</label>
+            <div class="grid grid-cols-2 gap-3">
+                <button type="button" @click="marital = 'sudah_menikah'; dispensasi = false"
+                        class="px-4 py-3 rounded-xl border-2 transition-all text-sm font-bold"
+                        :class="marital === 'sudah_menikah' ? 'border-rose-400 bg-rose-50 text-rose-600' : 'border-gray-200 bg-white hover:border-rose-200 text-gray-500'">
+                    Sudah Menikah
+                </button>
+                <button type="button" @click="marital = 'belum_menikah'"
+                        class="px-4 py-3 rounded-xl border-2 transition-all text-sm font-bold"
+                        :class="marital === 'belum_menikah' ? 'border-rose-400 bg-rose-50 text-rose-600' : 'border-gray-200 bg-white hover:border-rose-200 text-gray-500'">
+                    Belum Menikah
+                </button>
+            </div>
+            @error('maritalStatus')
+            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Tanggal Pernikahan — hanya kalau sudah menikah --}}
+        <div x-show="marital === 'sudah_menikah'" x-transition
+             style="{{ $maritalStatus !== 'sudah_menikah' ? 'display:none' : '' }}">
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Tanggal Pernikahan</label>
+            <input
+                wire:model="weddingDate"
+                type="date"
+                class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 placeholder-gray-300 outline-none transition-all
+                       {{ $errors->has('weddingDate') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"
+            />
+            @error('weddingDate')
+            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Checkbox dispensasi — hanya relevan kalau belum menikah (dispensasi diurus sebelum menikah) --}}
+        <label class="flex items-center gap-2.5 cursor-pointer w-fit"
+               x-show="marital === 'belum_menikah'" x-transition
+               style="{{ $maritalStatus !== 'belum_menikah' ? 'display:none' : '' }}">
+            <input wire:model="isDispensationMarriage" type="checkbox"
+                   class="w-4 h-4 rounded border-gray-300 text-rose-500 focus:ring-rose-400" />
+            <span class="text-sm text-gray-700">Menikah dengan dispensasi (di bawah usia minimal)</span>
+        </label>
+
+        {{-- Tgl Dispensasi Pernikahan — hanya kalau belum menikah & checkbox dicentang --}}
+        <div x-show="marital === 'belum_menikah' && dispensasi" x-transition
+             style="{{ ($maritalStatus !== 'belum_menikah' || !$isDispensationMarriage) ? 'display:none' : '' }}">
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Tgl Dispensasi Pernikahan</label>
+            <input
+                wire:model="marriageDispensationDate"
+                type="date"
+                class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 placeholder-gray-300 outline-none transition-all
+                       {{ $errors->has('marriageDispensationDate') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"
+            />
+            @error('marriageDispensationDate')
+            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         {{-- Status Hamil --}}

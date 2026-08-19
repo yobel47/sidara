@@ -22,6 +22,18 @@
         </div>
     </div>
 
+    {{-- Notifikasi perubahan status admin --}}
+    @if($adminNotice)
+    <div class="bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+        <p class="text-sm text-rose-600 font-medium">{{ $adminNotice }}</p>
+        <button wire:click="$set('adminNotice', '')" class="text-rose-400 hover:text-rose-600 shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+    @endif
+
     {{-- Table --}}
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
@@ -46,6 +58,9 @@
                         <th
                             class="px-4 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">
                             Bayi</th>
+                        <th
+                            class="px-4 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">
+                            Admin</th>
                         <th class="px-4 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">
                             Aksi</th>
                     </tr>
@@ -143,6 +158,32 @@
                             @endif
                         </td>
 
+                        <td class="px-4 py-3.5 text-center">
+                            <div class="flex flex-col items-center gap-1.5">
+                                @if($user->is_admin)
+                                <span
+                                    class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-600">
+                                    Admin
+                                </span>
+                                @endif
+
+                                @if($user->id === auth()->id())
+                                <span class="text-[11px] text-gray-300 italic">Akun Anda</span>
+                                @elseif($user->is_admin)
+                                <button wire:click="toggleAdmin({{ $user->id }})"
+                                    wire:confirm="Cabut akses admin dari {{ $user->name }}?"
+                                    class="text-[11px] font-semibold text-gray-400 hover:text-gray-600 transition-colors">
+                                    Cabut
+                                </button>
+                                @else
+                                <button wire:click="toggleAdmin({{ $user->id }})"
+                                    class="text-[11px] font-semibold text-violet-500 hover:text-violet-700 transition-colors">
+                                    Jadikan Admin
+                                </button>
+                                @endif
+                            </div>
+                        </td>
+
                         <td class="px-4 py-3.5 text-right">
                             <button wire:click="lihatDetail({{ $user->id }})" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold
                                        text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors">
@@ -157,7 +198,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="9" class="px-4 py-16 text-center text-gray-400 text-sm">
+                        <td colspan="10" class="px-4 py-16 text-center text-gray-400 text-sm">
                             @if($search)
                             Tidak ada pengguna yang cocok dengan
                             "<span class="font-semibold text-gray-600">{{ $search }}</span>"
@@ -271,6 +312,27 @@
                                 {{ $ch->statusPregnant === 'hamil' ? 'Sedang Hamil' : 'Tidak Hamil' }}
                                 @if($ch->gestationalAge) &middot; {{ $ch->gestationalAge }} minggu @endif
                             </dd>
+                        </div>
+                        <div class="col-span-2 bg-gray-50 rounded-xl p-4">
+                            <dt class="text-xs text-gray-400 mb-1">Status Pernikahan</dt>
+                            <dd class="font-semibold text-gray-800">
+                                @if($ch->maritalStatus === 'sudah_menikah')
+                                Sudah Menikah
+                                @if($ch->weddingDate) &middot; {{ $ch->weddingDate->translatedFormat('d F Y') }} @endif
+                                @elseif($ch->maritalStatus === 'belum_menikah')
+                                Belum Menikah
+                                @else
+                                <span class="text-gray-300 font-normal italic">Belum diisi</span>
+                                @endif
+                            </dd>
+                            @if($ch->isDispensationMarriage)
+                            <dd class="text-sm text-gray-600 mt-1.5 pt-1.5 border-t border-gray-100">
+                                Menikah dengan dispensasi (di bawah usia minimal)
+                                @if($ch->marriageDispensationDate)
+                                &middot; {{ $ch->marriageDispensationDate->translatedFormat('d F Y') }}
+                                @endif
+                            </dd>
+                            @endif
                         </div>
                         <div class="col-span-2 bg-gray-50 rounded-xl p-4">
                             <dt class="text-xs text-gray-400 mb-1">Alamat</dt>

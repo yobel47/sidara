@@ -115,7 +115,7 @@
                     <span class="text-sm text-gray-600">Hemoglobin (Hb)</span>
                     <div class="flex items-center gap-1.5">
                         <input wire:model="hemoglobin" type="number" min="1" max="25" step="0.1" placeholder="0"
-                            class="w-16 text-sm text-gray-800 font-medium text-right border-none outline-none bg-transparent" />
+                            class="w-20 text-sm text-gray-800 font-medium text-right border-none outline-none bg-transparent" />
                         <span class="text-sm text-gray-400">g/dL</span>
                         <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" stroke-width="2"
                             viewBox="0 0 24 24">
