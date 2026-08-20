@@ -597,6 +597,61 @@
                                     @error('recordForm.weight')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
                                 </div>
                             </div>
+
+                            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider pt-1">Khusus ANC1 / Kunjungan Pertama</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">HPHT (Hari Pertama Haid Terakhir)</label>
+                                    <input wire:model="recordForm.hpht" type="date"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.hpht') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.hpht')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Tinggi Badan (cm)</label>
+                                    <input wire:model="recordForm.height" type="number" step="0.1"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.height') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.height')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+
+                            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider pt-1">Setiap Kunjungan</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Tekanan Darah (mmHg)</label>
+                                    <div class="flex items-center gap-1.5">
+                                        <input wire:model="recordForm.systolic" type="number" placeholder="Sistole"
+                                            class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                                   {{ $errors->has('recordForm.systolic') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                        <span class="text-gray-400">/</span>
+                                        <input wire:model="recordForm.diastolic" type="number" placeholder="Diastole"
+                                            class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                                   {{ $errors->has('recordForm.diastolic') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    </div>
+                                    @error('recordForm.systolic')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                    @error('recordForm.diastolic')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">LILA / Lingkar Lengan Atas (cm)</label>
+                                    <input wire:model="recordForm.lila" type="number" step="0.1"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.lila') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.lila')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Konsumsi Tablet Tambah Darah / MMS</label>
+                                <select wire:model="recordForm.tookIronSupplement"
+                                    class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none appearance-none bg-white transition-all
+                                           {{ $errors->has('recordForm.tookIronSupplement') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    <option value="">Pilih</option>
+                                    <option value="ya">Ya</option>
+                                    <option value="tidak">Tidak</option>
+                                </select>
+                                @error('recordForm.tookIronSupplement')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+
                             <div>
                                 <label class="block text-xs text-gray-400 mb-1">Catatan</label>
                                 <textarea wire:model="recordForm.notes" rows="2"
@@ -642,6 +697,36 @@
                                 <p class="text-xs text-gray-400">Berat Badan</p>
                                 <p class="font-semibold text-gray-800 text-sm">{{ $p->weight }} kg</p>
                             </div>
+                            @if($p->hpht)
+                            <div>
+                                <p class="text-xs text-gray-400">HPHT (Hari Pertama Haid Terakhir)</p>
+                                <p class="font-semibold text-gray-800 text-sm">{{ $p->hpht->translatedFormat('d F Y') }}</p>
+                            </div>
+                            @endif
+                            @if($p->height)
+                            <div>
+                                <p class="text-xs text-gray-400">Tinggi Badan</p>
+                                <p class="font-semibold text-gray-800 text-sm">{{ $p->height }} cm</p>
+                            </div>
+                            @endif
+                            @if($p->systolic && $p->diastolic)
+                            <div>
+                                <p class="text-xs text-gray-400">Tekanan Darah</p>
+                                <p class="font-semibold text-gray-800 text-sm">{{ $p->systolic }}/{{ $p->diastolic }} mmHg</p>
+                            </div>
+                            @endif
+                            @if($p->lila)
+                            <div>
+                                <p class="text-xs text-gray-400">LILA (Lingkar Lengan Atas)</p>
+                                <p class="font-semibold text-gray-800 text-sm">{{ $p->lila }} cm</p>
+                            </div>
+                            @endif
+                            @if(!is_null($p->took_iron_supplement))
+                            <div>
+                                <p class="text-xs text-gray-400">Tablet Tambah Darah/MMS</p>
+                                <p class="font-semibold text-gray-800 text-sm">{{ $p->took_iron_supplement ? 'Ya' : 'Tidak' }}</p>
+                            </div>
+                            @endif
                         </div>
                         @if($p->notes)
                         <p class="text-xs text-gray-500 mt-3 pt-3 border-t border-gray-100">{{ $p->notes }}</p>

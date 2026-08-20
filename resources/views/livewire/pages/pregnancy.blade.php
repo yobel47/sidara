@@ -131,6 +131,12 @@
             <div class="bg-white rounded-2xl border border-violet-100 shadow-sm px-4 py-4">
                 <p class="text-sm font-extrabold text-gray-800 mb-3">{{ $k['tanggal'] }}</p>
                 <div class="space-y-1.5 mb-3">
+                    @if($k['hpht'])
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-400">HPHT</span>
+                        <span class="text-xs font-semibold text-gray-700">{{ $k['hpht'] }}</span>
+                    </div>
+                    @endif
                     <div class="flex items-center justify-between">
                         <span class="text-xs text-gray-400">Usia Kehamilan</span>
                         <span class="text-xs font-semibold text-gray-700">{{ $k['usiaKehamilan'] }} minggu</span>
@@ -143,6 +149,30 @@
                         <span class="text-xs text-gray-400">Berat Badan</span>
                         <span class="text-xs font-semibold text-gray-700">{{ $k['weight'] }} kg</span>
                     </div>
+                    @if($k['height'])
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-400">Tinggi Badan</span>
+                        <span class="text-xs font-semibold text-gray-700">{{ $k['height'] }} cm</span>
+                    </div>
+                    @endif
+                    @if($k['systolic'] && $k['diastolic'])
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-400">Tekanan Darah</span>
+                        <span class="text-xs font-semibold text-gray-700">{{ $k['systolic'] }}/{{ $k['diastolic'] }} mmHg</span>
+                    </div>
+                    @endif
+                    @if($k['lila'])
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-400">LILA</span>
+                        <span class="text-xs font-semibold text-gray-700">{{ $k['lila'] }} cm</span>
+                    </div>
+                    @endif
+                    @if(!is_null($k['tookIronSupplement']))
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs text-gray-400">Tablet Tambah Darah/MMS</span>
+                        <span class="text-xs font-semibold text-gray-700">{{ $k['tookIronSupplement'] ? 'Ya' : 'Tidak' }}</span>
+                    </div>
+                    @endif
                 </div>
                 <div class="flex items-center justify-between pt-3 border-t border-gray-50">
                     <span class="text-xs font-semibold text-gray-500">Status Anemia</span>

@@ -17,16 +17,28 @@ class Pregnancy extends Model
         'id_user',
         'date_pregnancy',
         'gestational_age',
+        'hpht',
         'hemoglobin',
         'weight',
+        'height',
+        'systolic',
+        'diastolic',
+        'lila',
+        'took_iron_supplement',
         'notes',
     ];
 
     protected $casts = [
-        'date_pregnancy'  => 'date',
-        'hemoglobin'      => 'float',
-        'weight'          => 'float',
-        'gestational_age' => 'integer',
+        'date_pregnancy'       => 'date',
+        'hpht'                 => 'date',
+        'hemoglobin'           => 'float',
+        'weight'               => 'float',
+        'height'               => 'float',
+        'gestational_age'      => 'integer',
+        'systolic'             => 'integer',
+        'diastolic'            => 'integer',
+        'lila'                 => 'float',
+        'took_iron_supplement' => 'boolean',
     ];
 
     public function user(): BelongsTo

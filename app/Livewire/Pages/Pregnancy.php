@@ -70,14 +70,20 @@ class Pregnancy extends Component
         $this->kunjungan = $visits->map(function ($v) {
                 $d = $v->diagnosis;
                 return [
-                    'id'            => $v->id_pregnancy,
-                    'tanggal'       => $v->date_pregnancy->translatedFormat('d F Y'),
-                    'usiaKehamilan' => $v->gestational_age,
-                    'hemoglobin'    => $v->hemoglobin,
-                    'weight'        => $v->weight,
-                    'statusAnemia'  => $d['kategori'],
-                    'warnaStatus'   => $d['warna'],
-                    'labelStatus'   => $d['label'],
+                    'id'                 => $v->id_pregnancy,
+                    'tanggal'            => $v->date_pregnancy->translatedFormat('d F Y'),
+                    'usiaKehamilan'      => $v->gestational_age,
+                    'hpht'               => $v->hpht?->translatedFormat('d F Y'),
+                    'hemoglobin'         => $v->hemoglobin,
+                    'weight'             => $v->weight,
+                    'height'             => $v->height,
+                    'systolic'           => $v->systolic,
+                    'diastolic'          => $v->diastolic,
+                    'lila'               => $v->lila,
+                    'tookIronSupplement' => $v->took_iron_supplement,
+                    'statusAnemia'       => $d['kategori'],
+                    'warnaStatus'        => $d['warna'],
+                    'labelStatus'        => $d['label'],
                 ];
             })->values()->toArray();
     }

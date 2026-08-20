@@ -77,6 +77,38 @@
                 @enderror
             </div>
 
+            @if($isFirstVisit)
+            {{-- HPHT — khusus ANC1 / kunjungan pertama --}}
+            <div class="border-b border-gray-50">
+                <div class="flex items-center justify-between px-4 py-3.5">
+                    <div class="pr-3">
+                        <span class="text-sm text-gray-600">HPHT</span>
+                        <p class="text-[11px] text-gray-400 leading-tight mt-0.5">Hari Pertama Haid Terakhir</p>
+                    </div>
+                    <input wire:model="hpht" type="date"
+                        class="shrink-0 text-sm text-gray-800 font-medium text-right border-none outline-none bg-transparent cursor-pointer" />
+                </div>
+                @error('hpht')
+                <p class="text-xs text-rose-500 px-4 pb-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Tinggi Badan — khusus ANC1 / kunjungan pertama --}}
+            <div class="border-b border-gray-50">
+                <div class="flex items-center justify-between px-4 py-3.5">
+                    <span class="text-sm text-gray-600">Tinggi Badan</span>
+                    <div class="flex items-center gap-1.5">
+                        <input wire:model="height" type="number" min="100" max="250" step="0.1" placeholder="0"
+                            class="w-20 text-sm text-gray-800 font-medium text-right border-none outline-none bg-transparent" />
+                        <span class="text-sm text-gray-400">cm</span>
+                    </div>
+                </div>
+                @error('height')
+                <p class="text-xs text-rose-500 px-4 pb-2">{{ $message }}</p>
+                @enderror
+            </div>
+            @endif
+
             {{-- Hemoglobin --}}
             <div class="border-b border-gray-50">
                 <div class="flex items-center justify-between px-4 py-3.5">
@@ -95,12 +127,12 @@
             </div>
 
             {{-- Berat Badan --}}
-            <div>
+            <div class="border-b border-gray-50">
                 <div class="flex items-center justify-between px-4 py-3.5">
                     <span class="text-sm text-gray-600">Berat Badan</span>
                     <div class="flex items-center gap-1.5">
                         <input wire:model="weight" type="number" min="20" max="200" step="0.1" placeholder="0"
-                            class="w-14 text-sm text-gray-800 font-medium text-right border-none outline-none bg-transparent" />
+                            class="w-20 text-sm text-gray-800 font-medium text-right border-none outline-none bg-transparent" />
                         <span class="text-sm text-gray-400">kg</span>
 
                     </div>
@@ -110,6 +142,67 @@
                 @enderror
             </div>
 
+            {{-- Tekanan Darah --}}
+            <div class="border-b border-gray-50">
+                <div class="flex items-center justify-between px-4 py-3.5">
+                    <span class="text-sm text-gray-600 shrink-0">Tekanan Darah</span>
+                    <div class="flex items-center gap-1">
+                        <input wire:model="systolic" type="number" min="60" max="250" placeholder="0"
+                            class="w-14 text-sm text-gray-800 font-medium text-right border-none outline-none bg-transparent" />
+                        <span class="text-sm text-gray-400">/</span>
+                        <input wire:model="diastolic" type="number" min="40" max="150" placeholder="0"
+                            class="w-14 text-sm text-gray-800 font-medium text-left border-none outline-none bg-transparent" />
+                        <span class="text-sm text-gray-400">mmHg</span>
+                    </div>
+                </div>
+                @error('systolic')
+                <p class="text-xs text-rose-500 px-4 pb-2">{{ $message }}</p>
+                @enderror
+                @error('diastolic')
+                <p class="text-xs text-rose-500 px-4 pb-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- LILA --}}
+            <div>
+                <div class="flex items-center justify-between px-4 py-3.5">
+                    <div class="pr-3">
+                        <span class="text-sm text-gray-600">LILA</span>
+                        <p class="text-[11px] text-gray-400 leading-tight mt-0.5">Lingkar Lengan Atas</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <input wire:model="lila" type="number" min="10" max="50" step="0.1" placeholder="0"
+                            class="w-16 text-sm text-gray-800 font-medium text-right border-none outline-none bg-transparent" />
+                        <span class="text-sm text-gray-400">cm</span>
+                    </div>
+                </div>
+                @error('lila')
+                <p class="text-xs text-rose-500 px-4 pb-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+        </div>
+
+        {{-- Konsumsi Tablet Tambah Darah / MMS --}}
+        <div>
+            <label class="block text-sm font-bold text-violet-600 uppercase tracking-wider mb-2">
+                Konsumsi Tablet Tambah Darah / MMS
+            </label>
+            <div class="grid grid-cols-2 gap-3">
+                <button type="button" wire:click="$set('tookIronSupplement', 'ya')"
+                    class="px-4 py-3 rounded-xl border-2 transition-all text-sm font-bold
+                           {{ $tookIronSupplement === 'ya' ? 'border-violet-400 bg-violet-50 text-violet-600' : 'border-gray-200 bg-white hover:border-violet-200 text-gray-500' }}">
+                    Ya
+                </button>
+                <button type="button" wire:click="$set('tookIronSupplement', 'tidak')"
+                    class="px-4 py-3 rounded-xl border-2 transition-all text-sm font-bold
+                           {{ $tookIronSupplement === 'tidak' ? 'border-violet-400 bg-violet-50 text-violet-600' : 'border-gray-200 bg-white hover:border-violet-200 text-gray-500' }}">
+                    Tidak
+                </button>
+            </div>
+            @error('tookIronSupplement')
+            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         {{-- Hasil Status Anemia (live preview) --}}
