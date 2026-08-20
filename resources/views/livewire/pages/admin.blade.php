@@ -170,8 +170,8 @@
                                 @if($user->id === auth()->id())
                                 <span class="text-[11px] text-gray-300 italic">Akun Anda</span>
                                 @elseif($user->is_admin)
-                                <button wire:click="toggleAdmin({{ $user->id }})"
-                                    wire:confirm="Cabut akses admin dari {{ $user->name }}?"
+                                <button
+                                    @click="confirmAction('Cabut akses admin dari ' + @js($user->name) + '?', {confirmText: 'Ya, Cabut', confirmColor: '#6b7280'}).then(ok => ok && $wire.toggleAdmin({{ $user->id }}))"
                                     class="text-[11px] font-semibold text-gray-400 hover:text-gray-600 transition-colors">
                                     Cabut
                                 </button>
@@ -269,8 +269,8 @@
                 @if($user->id === auth()->id())
                 <span class="text-xs text-gray-300 italic">Akun Anda</span>
                 @elseif($user->is_admin)
-                <button wire:click="toggleAdmin({{ $user->id }})"
-                    wire:confirm="Cabut akses admin dari {{ $user->name }}?"
+                <button
+                    @click="confirmAction('Cabut akses admin dari ' + @js($user->name) + '?', {confirmText: 'Ya, Cabut', confirmColor: '#6b7280'}).then(ok => ok && $wire.toggleAdmin({{ $user->id }}))"
                     class="text-xs font-semibold text-gray-400 hover:text-gray-600 transition-colors">
                     Cabut Admin
                 </button>
@@ -342,8 +342,8 @@
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
                     @if($this->selectedUser->id !== auth()->id())
-                    <button wire:click="deleteUser({{ $this->selectedUser->id }})"
-                        wire:confirm="Hapus akun {{ $this->selectedUser->chUser?->fullname ?? $this->selectedUser->name }} beserta SEMUA data kesehatannya secara permanen? Tindakan ini tidak bisa dibatalkan."
+                    <button
+                        @click="confirmAction('Hapus akun ' + @js($this->selectedUser->chUser?->fullname ?? $this->selectedUser->name) + ' beserta SEMUA data kesehatannya secara permanen? Tindakan ini tidak bisa dibatalkan.', {title: 'Hapus Akun?', confirmText: 'Ya, Hapus Permanen'}).then(ok => ok && $wire.deleteUser({{ $this->selectedUser->id }}))"
                         class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
                         aria-label="Hapus Akun" title="Hapus Akun">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -651,8 +651,8 @@
                                 class="text-xs font-semibold text-violet-500 hover:text-violet-700 transition-colors">
                                 Edit
                             </button>
-                            <button wire:click="deleteRecord('pregnancy', {{ $p->id_pregnancy }})"
-                                wire:confirm="Hapus data kunjungan ANC tanggal {{ $p->date_pregnancy->translatedFormat('d F Y') }}?"
+                            <button
+                                @click="confirmAction('Hapus data kunjungan ANC tanggal {{ $p->date_pregnancy->translatedFormat('d F Y') }}?').then(ok => ok && $wire.deleteRecord('pregnancy', {{ $p->id_pregnancy }}))"
                                 class="text-xs font-semibold text-red-400 hover:text-red-600 transition-colors">
                                 Hapus
                             </button>
@@ -757,8 +757,8 @@
                                 class="text-xs font-semibold text-violet-500 hover:text-violet-700 transition-colors">
                                 Edit
                             </button>
-                            <button wire:click="deleteRecord('screening', {{ $s->id_screening }})"
-                                wire:confirm="Hapus data skrining tanggal {{ $s->date_screening->translatedFormat('d F Y') }}?"
+                            <button
+                                @click="confirmAction('Hapus data skrining tanggal {{ $s->date_screening->translatedFormat('d F Y') }}?').then(ok => ok && $wire.deleteRecord('screening', {{ $s->id_screening }}))"
                                 class="text-xs font-semibold text-red-400 hover:text-red-600 transition-colors">
                                 Hapus
                             </button>
@@ -904,8 +904,8 @@
                                 class="text-xs font-semibold text-violet-500 hover:text-violet-700 transition-colors">
                                 Edit
                             </button>
-                            <button wire:click="deleteRecord('childbirth', {{ $c->id_childbirth }})"
-                                wire:confirm="Hapus data persalinan tanggal {{ $c->date_childbirth->translatedFormat('d F Y') }}?"
+                            <button
+                                @click="confirmAction('Hapus data persalinan tanggal {{ $c->date_childbirth->translatedFormat('d F Y') }}?').then(ok => ok && $wire.deleteRecord('childbirth', {{ $c->id_childbirth }}))"
                                 class="text-xs font-semibold text-red-400 hover:text-red-600 transition-colors">
                                 Hapus
                             </button>
@@ -1015,8 +1015,8 @@
                                 class="text-xs font-semibold text-violet-500 hover:text-violet-700 transition-colors">
                                 Edit
                             </button>
-                            <button wire:click="deleteRecord('baby', {{ $b->id_baby }})"
-                                wire:confirm="Hapus data bayi {{ $b->name }}?"
+                            <button
+                                @click="confirmAction('Hapus data bayi ' + @js($b->name) + '?').then(ok => ok && $wire.deleteRecord('baby', {{ $b->id_baby }}))"
                                 class="text-xs font-semibold text-red-400 hover:text-red-600 transition-colors">
                                 Hapus
                             </button>
