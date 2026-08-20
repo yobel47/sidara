@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    {{-- Notifikasi perubahan status admin --}}
+    {{-- Notifikasi --}}
     @if($adminNotice)
     <div class="bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
         <p class="text-sm text-rose-600 font-medium">{{ $adminNotice }}</p>
@@ -34,8 +34,8 @@
     </div>
     @endif
 
-    {{-- Table --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    {{-- Table — desktop only --}}
+    <div class="hidden lg:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
@@ -220,6 +220,94 @@
         @endif
     </div>
 
+    {{-- Card list — mobile only --}}
+    <div class="lg:hidden space-y-3">
+        @forelse($users as $user)
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                    <p class="font-semibold text-gray-800 truncate">
+                        {{ $user->chUser?->fullname ?? $user->name }}
+                    </p>
+                    <p class="text-xs text-gray-400 truncate">{{ '@' . $user->username }}
+                        @if($user->email) &middot; {{ $user->email }} @endif
+                    </p>
+                </div>
+                @if($user->is_admin)
+                <span class="shrink-0 inline-flex px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-600">
+                    Admin
+                </span>
+                @endif
+            </div>
+
+            <div class="flex flex-wrap items-center gap-1.5 mt-3">
+                @if($user->chUser)
+                @if($user->chUser->statusPregnant === 'hamil')
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-600">Hamil</span>
+                @else
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-gray-100 text-gray-500">Tidak Hamil</span>
+                @endif
+                @else
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-gray-50 text-gray-300 italic">Belum diisi</span>
+                @endif
+
+                @if($user->pregnancy_count > 0)
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-600">ANC {{ $user->pregnancy_count }}</span>
+                @endif
+                @if($user->screening_count > 0)
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-violet-50 text-violet-600">Skrining {{ $user->screening_count }}</span>
+                @endif
+                @if($user->childbirth_count > 0)
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-green-50 text-green-600">Persalinan</span>
+                @endif
+                @if($user->baby_count > 0)
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-600">Bayi {{ $user->baby_count }}</span>
+                @endif
+            </div>
+
+            <div class="flex items-center justify-between gap-2 mt-3.5 pt-3.5 border-t border-gray-50">
+                @if($user->id === auth()->id())
+                <span class="text-xs text-gray-300 italic">Akun Anda</span>
+                @elseif($user->is_admin)
+                <button wire:click="toggleAdmin({{ $user->id }})"
+                    wire:confirm="Cabut akses admin dari {{ $user->name }}?"
+                    class="text-xs font-semibold text-gray-400 hover:text-gray-600 transition-colors">
+                    Cabut Admin
+                </button>
+                @else
+                <button wire:click="toggleAdmin({{ $user->id }})"
+                    class="text-xs font-semibold text-violet-500 hover:text-violet-700 transition-colors">
+                    Jadikan Admin
+                </button>
+                @endif
+
+                <button wire:click="lihatDetail({{ $user->id }})" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold
+                           text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors">
+                    Detail
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        @empty
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center text-gray-400 text-sm">
+            @if($search)
+            Tidak ada pengguna yang cocok dengan
+            "<span class="font-semibold text-gray-600">{{ $search }}</span>"
+            @else
+            Belum ada pengguna terdaftar.
+            @endif
+        </div>
+        @endforelse
+
+        @if($users->hasPages())
+        <div class="pt-2">
+            {{ $users->links() }}
+        </div>
+        @endif
+    </div>
+
 
     {{-- ─── SLIDE-OVER DETAIL ─── --}}
     <div x-data="{ tab: 'profil' }" x-init="$watch('$wire.selectedUserId', v => { if (v) tab = 'profil'; })" x-cloak
@@ -231,7 +319,7 @@
         {{-- Backdrop --}}
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" wire:click="tutupDetail"></div>
 
-        {{-- Panel --}}
+        {{-- Panel — full-width di mobile, w-full max-w-2xl di lg+ --}}
         <div class="absolute right-0 inset-y-0 w-full max-w-2xl bg-white shadow-2xl flex flex-col"
             x-transition:enter="transform ease-in-out duration-300" x-transition:enter-start="translate-x-full"
             x-transition:enter-end="translate-x-0" x-transition:leave="transform ease-in-out duration-200"
@@ -240,28 +328,41 @@
             @if($this->selectedUser)
 
             {{-- Panel header --}}
-            <div class="px-6 py-5 border-b border-gray-100 flex items-start justify-between shrink-0">
+            <div class="px-5 lg:px-6 py-4 lg:py-5 border-b border-gray-100 flex items-start justify-between gap-3 shrink-0">
                 <div class="min-w-0">
                     <h2 class="text-lg font-extrabold text-gray-800 truncate">
                         {{ $this->selectedUser->chUser?->fullname ?? $this->selectedUser->name }}
                     </h2>
-                    <p class="text-sm text-gray-400 mt-0.5">
+                    <p class="text-sm text-gray-400 mt-0.5 truncate">
                         &#64;{{ $this->selectedUser->username }}
                         @if($this->selectedUser->email)
                         &middot; {{ $this->selectedUser->email }}
                         @endif
                     </p>
                 </div>
-                <button wire:click="tutupDetail"
-                    class="ml-4 shrink-0 p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                <div class="flex items-center gap-1 shrink-0">
+                    @if($this->selectedUser->id !== auth()->id())
+                    <button wire:click="deleteUser({{ $this->selectedUser->id }})"
+                        wire:confirm="Hapus akun {{ $this->selectedUser->chUser?->fullname ?? $this->selectedUser->name }} beserta SEMUA data kesehatannya secara permanen? Tindakan ini tidak bisa dibatalkan."
+                        class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                        aria-label="Hapus Akun" title="Hapus Akun">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                        </svg>
+                    </button>
+                    @endif
+                    <button wire:click="tutupDetail"
+                        class="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             {{-- Tabs --}}
-            <div class="px-6 border-b border-gray-100 flex gap-1 shrink-0 overflow-x-auto">
+            <div class="px-5 lg:px-6 border-b border-gray-100 flex gap-1 shrink-0 overflow-x-auto">
                 @foreach([
                 'profil' => 'Profil',
                 'skrining' => 'Skrining',
@@ -279,12 +380,14 @@
             </div>
 
             {{-- Tab content --}}
-            <div class="flex-1 overflow-y-auto p-6 space-y-0">
+            <div class="flex-1 overflow-y-auto p-5 lg:p-6 space-y-0">
 
                 {{-- ── PROFIL ── --}}
                 <div x-show="tab === 'profil'">
                     @if($this->selectedUser->chUser)
                     @php $ch = $this->selectedUser->chUser; @endphp
+
+                    @if(!$editingProfile)
                     <dl class="grid grid-cols-2 gap-3">
                         <div class="col-span-2 bg-gray-50 rounded-xl p-4">
                             <dt class="text-xs text-gray-400 mb-1">Nama Lengkap</dt>
@@ -325,20 +428,131 @@
                                 <span class="text-gray-300 font-normal italic">Belum diisi</span>
                                 @endif
                             </dd>
-                            @if($ch->isDispensationMarriage)
-                            <dd class="text-sm text-gray-600 mt-1.5 pt-1.5 border-t border-gray-100">
-                                Menikah dengan dispensasi (di bawah usia minimal)
-                                @if($ch->marriageDispensationDate)
-                                &middot; {{ $ch->marriageDispensationDate->translatedFormat('d F Y') }}
-                                @endif
-                            </dd>
-                            @endif
                         </div>
                         <div class="col-span-2 bg-gray-50 rounded-xl p-4">
                             <dt class="text-xs text-gray-400 mb-1">Alamat</dt>
                             <dd class="font-semibold text-gray-800">{{ $ch->address }}</dd>
                         </div>
                     </dl>
+
+                    <button wire:click="editProfile" class="w-full mt-4 py-3 rounded-xl border-2 border-rose-200 hover:border-rose-400
+                               text-rose-500 hover:text-rose-600 font-bold text-sm transition-all">
+                        Edit Profil
+                    </button>
+
+                    @else
+                    {{-- EDIT FORM PROFIL --}}
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Nama Lengkap</label>
+                            <input wire:model="profileForm.fullname" type="text"
+                                class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none transition-all
+                                       {{ $errors->has('profileForm.fullname') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                            @error('profileForm.fullname')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Alamat</label>
+                            <input wire:model="profileForm.address" type="text"
+                                class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none transition-all
+                                       {{ $errors->has('profileForm.address') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                            @error('profileForm.address')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Usia</label>
+                                <input wire:model="profileForm.age" type="number"
+                                    class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none transition-all
+                                           {{ $errors->has('profileForm.age') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                @error('profileForm.age')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">No. HP</label>
+                                <input wire:model="profileForm.phone" type="text"
+                                    class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none transition-all
+                                           {{ $errors->has('profileForm.phone') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                @error('profileForm.phone')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Berat Badan (kg)</label>
+                                <input wire:model="profileForm.weight" type="number" step="0.1"
+                                    class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none transition-all
+                                           {{ $errors->has('profileForm.weight') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                @error('profileForm.weight')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Tinggi Badan (cm)</label>
+                                <input wire:model="profileForm.height" type="number" step="0.1"
+                                    class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none transition-all
+                                           {{ $errors->has('profileForm.height') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                @error('profileForm.height')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Status Hamil</label>
+                            <select wire:model.live="profileForm.statusPregnant"
+                                class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none appearance-none bg-white transition-all
+                                       {{ $errors->has('profileForm.statusPregnant') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                <option value="hamil">Hamil</option>
+                                <option value="tidak_hamil">Tidak Hamil</option>
+                            </select>
+                            @error('profileForm.statusPregnant')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        @if(($profileForm['statusPregnant'] ?? null) === 'hamil')
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Usia Kehamilan</label>
+                            <select wire:model="profileForm.gestationalAge"
+                                class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none appearance-none bg-white transition-all
+                                       {{ $errors->has('profileForm.gestationalAge') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                <option value="">Pilih usia kehamilan</option>
+                                <option value="1-4">1-4 Minggu (Trimester 1)</option>
+                                <option value="5-8">5-8 Minggu (Trimester 1)</option>
+                                <option value="9-12">9-12 Minggu (Trimester 1)</option>
+                                <option value="13-16">13-16 Minggu (Trimester 2)</option>
+                                <option value="17-20">17-20 Minggu (Trimester 2)</option>
+                                <option value="21-24">21-24 Minggu (Trimester 2)</option>
+                                <option value="25-28">25-28 Minggu (Trimester 3)</option>
+                                <option value="29-32">29-32 Minggu (Trimester 3)</option>
+                                <option value="33-36">33-36 Minggu (Trimester 3)</option>
+                                <option value="37-40">37-40 Minggu (Trimester 3)</option>
+                            </select>
+                            @error('profileForm.gestationalAge')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        @endif
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Status Pernikahan</label>
+                            <select wire:model.live="profileForm.maritalStatus"
+                                class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none appearance-none bg-white transition-all
+                                       {{ $errors->has('profileForm.maritalStatus') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                <option value="belum_menikah">Belum Menikah</option>
+                                <option value="sudah_menikah">Sudah Menikah</option>
+                            </select>
+                            @error('profileForm.maritalStatus')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        @if(($profileForm['maritalStatus'] ?? null) === 'sudah_menikah')
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Tanggal Pernikahan</label>
+                            <input wire:model="profileForm.weddingDate" type="date"
+                                class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none transition-all
+                                       {{ $errors->has('profileForm.weddingDate') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                            @error('profileForm.weddingDate')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        @endif
+
+                        <div class="flex items-center gap-2 pt-2">
+                            <button wire:click="saveProfile" class="flex-1 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 active:scale-[0.98]
+                                       text-white font-bold text-sm transition-all">
+                                Simpan
+                            </button>
+                            <button wire:click="cancelEditProfile" class="px-5 py-3 rounded-xl border border-gray-200 hover:border-gray-300
+                                       text-gray-500 font-semibold text-sm transition-all">
+                                Batal
+                            </button>
+                        </div>
+                    </div>
+                    @endif
+
                     @else
                     <p class="text-center text-gray-400 text-sm py-16">Pengguna belum mengisi data identitas.</p>
                     @endif
@@ -347,17 +561,66 @@
                 {{-- ── KUNJUNGAN ANC ── --}}
                 <div x-show="tab === 'anc'" class="space-y-3">
                     @forelse($this->selectedUser->pregnancy as $p)
-                    @php
-                    $diag = $p->diagnosis;
-                    $badgeClass = match($diag['warna']) {
-                    'green' => 'bg-green-100 text-green-700',
-                    'yellow' => 'bg-yellow-100 text-yellow-700',
-                    'orange' => 'bg-orange-100 text-orange-700',
-                    'red' => 'bg-red-100 text-red-700',
-                    default => 'bg-gray-100 text-gray-600',
-                    };
-                    @endphp
                     <div class="border border-gray-100 rounded-xl p-4">
+                        @if($editingRecordType === 'pregnancy' && $editingRecordId === $p->id_pregnancy)
+                        {{-- EDIT FORM --}}
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Tanggal Kunjungan</label>
+                                    <input wire:model="recordForm.date_pregnancy" type="date"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.date_pregnancy') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.date_pregnancy')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Usia Kehamilan (minggu)</label>
+                                    <input wire:model="recordForm.gestational_age" type="number"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.gestational_age') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.gestational_age')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Hemoglobin (g/dL)</label>
+                                    <input wire:model="recordForm.hemoglobin" type="number" step="0.1"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.hemoglobin') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.hemoglobin')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Berat Badan (kg)</label>
+                                    <input wire:model="recordForm.weight" type="number" step="0.1"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.weight') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.weight')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Catatan</label>
+                                <textarea wire:model="recordForm.notes" rows="2"
+                                    class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all resize-none
+                                           {{ $errors->has('recordForm.notes') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"></textarea>
+                                @error('recordForm.notes')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button wire:click="saveRecord" class="flex-1 py-2.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm transition-all">Simpan</button>
+                                <button wire:click="cancelEditRecord" class="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-500 font-semibold text-sm transition-all">Batal</button>
+                            </div>
+                        </div>
+                        @else
+                        {{-- TAMPILAN --}}
+                        @php
+                        $diag = $p->diagnosis;
+                        $badgeClass = match($diag['warna']) {
+                        'green' => 'bg-green-100 text-green-700',
+                        'yellow' => 'bg-yellow-100 text-yellow-700',
+                        'orange' => 'bg-orange-100 text-orange-700',
+                        'red' => 'bg-red-100 text-red-700',
+                        default => 'bg-gray-100 text-gray-600',
+                        };
+                        @endphp
                         <div class="flex items-center justify-between mb-3">
                             <p class="font-bold text-gray-800 text-sm">
                                 {{ $p->date_pregnancy->translatedFormat('d F Y') }}
@@ -383,6 +646,18 @@
                         @if($p->notes)
                         <p class="text-xs text-gray-500 mt-3 pt-3 border-t border-gray-100">{{ $p->notes }}</p>
                         @endif
+                        <div class="flex items-center gap-4 mt-3 pt-3 border-t border-gray-50">
+                            <button wire:click="editRecord('pregnancy', {{ $p->id_pregnancy }})"
+                                class="text-xs font-semibold text-violet-500 hover:text-violet-700 transition-colors">
+                                Edit
+                            </button>
+                            <button wire:click="deleteRecord('pregnancy', {{ $p->id_pregnancy }})"
+                                wire:confirm="Hapus data kunjungan ANC tanggal {{ $p->date_pregnancy->translatedFormat('d F Y') }}?"
+                                class="text-xs font-semibold text-red-400 hover:text-red-600 transition-colors">
+                                Hapus
+                            </button>
+                        </div>
+                        @endif
                     </div>
                     @empty
                     <p class="text-center text-gray-400 text-sm py-16">Belum ada data kunjungan ANC.</p>
@@ -392,17 +667,66 @@
                 {{-- ── SKRINING ── --}}
                 <div x-show="tab === 'skrining'" class="space-y-3">
                     @forelse($this->selectedUser->screening as $s)
-                    @php
-                    $diag = $s->diagnosis;
-                    $badgeClass = match($diag['warna']) {
-                    'green' => 'bg-green-100 text-green-700',
-                    'yellow' => 'bg-yellow-100 text-yellow-700',
-                    'orange' => 'bg-orange-100 text-orange-700',
-                    'red' => 'bg-red-100 text-red-700',
-                    default => 'bg-gray-100 text-gray-600',
-                    };
-                    @endphp
                     <div class="border border-gray-100 rounded-xl p-4">
+                        @if($editingRecordType === 'screening' && $editingRecordId === $s->id_screening)
+                        {{-- EDIT FORM --}}
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Tanggal Skrining</label>
+                                    <input wire:model="recordForm.date_screening" type="date"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.date_screening') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.date_screening')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Hemoglobin (g/dL)</label>
+                                    <input wire:model="recordForm.hemoglobin" type="number" step="0.1"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.hemoglobin') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.hemoglobin')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Berat Badan (kg)</label>
+                                    <input wire:model="recordForm.weight" type="number" step="0.1"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.weight') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.weight')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Tinggi Badan (cm)</label>
+                                    <input wire:model="recordForm.height" type="number" step="0.1"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.height') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.height')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Keluhan</label>
+                                <textarea wire:model="recordForm.complaint" rows="2"
+                                    class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all resize-none
+                                           {{ $errors->has('recordForm.complaint') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"></textarea>
+                                @error('recordForm.complaint')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button wire:click="saveRecord" class="flex-1 py-2.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm transition-all">Simpan</button>
+                                <button wire:click="cancelEditRecord" class="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-500 font-semibold text-sm transition-all">Batal</button>
+                            </div>
+                        </div>
+                        @else
+                        {{-- TAMPILAN --}}
+                        @php
+                        $diag = $s->diagnosis;
+                        $badgeClass = match($diag['warna']) {
+                        'green' => 'bg-green-100 text-green-700',
+                        'yellow' => 'bg-yellow-100 text-yellow-700',
+                        'orange' => 'bg-orange-100 text-orange-700',
+                        'red' => 'bg-red-100 text-red-700',
+                        default => 'bg-gray-100 text-gray-600',
+                        };
+                        @endphp
                         <div class="flex items-center justify-between mb-3">
                             <p class="font-bold text-gray-800 text-sm">
                                 {{ $s->date_screening->translatedFormat('d F Y') }}
@@ -428,6 +752,18 @@
                         <p class="text-xs text-gray-500 mt-3 pt-3 border-t border-gray-100">
                             <span class="text-gray-400">Keluhan:</span> {{ $s->complaint }}
                         </p>
+                        <div class="flex items-center gap-4 mt-3 pt-3 border-t border-gray-50">
+                            <button wire:click="editRecord('screening', {{ $s->id_screening }})"
+                                class="text-xs font-semibold text-violet-500 hover:text-violet-700 transition-colors">
+                                Edit
+                            </button>
+                            <button wire:click="deleteRecord('screening', {{ $s->id_screening }})"
+                                wire:confirm="Hapus data skrining tanggal {{ $s->date_screening->translatedFormat('d F Y') }}?"
+                                class="text-xs font-semibold text-red-400 hover:text-red-600 transition-colors">
+                                Hapus
+                            </button>
+                        </div>
+                        @endif
                     </div>
                     @empty
                     <p class="text-center text-gray-400 text-sm py-16">Belum ada data skrining.</p>
@@ -438,6 +774,94 @@
                 <div x-show="tab === 'persalinan'" class="space-y-3">
                     @forelse($this->selectedUser->childbirth as $c)
                     <div class="border border-gray-100 rounded-xl p-4">
+                        @if($editingRecordType === 'childbirth' && $editingRecordId === $c->id_childbirth)
+                        {{-- EDIT FORM --}}
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Tanggal Persalinan</label>
+                                    <input wire:model="recordForm.date_childbirth" type="date"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.date_childbirth') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.date_childbirth')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Usia Kehamilan (minggu)</label>
+                                    <input wire:model="recordForm.gestational_age" type="number"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.gestational_age') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.gestational_age')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Tempat Persalinan</label>
+                                <select wire:model="recordForm.place"
+                                    class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none appearance-none bg-white transition-all
+                                           {{ $errors->has('recordForm.place') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    <option>Puskesmas</option>
+                                    <option>Rumah Sakit</option>
+                                    <option>Klinik</option>
+                                    <option>Bidan Praktik</option>
+                                    <option>Rumah</option>
+                                    <option>Lainnya</option>
+                                </select>
+                                @error('recordForm.place')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Jenis Persalinan</label>
+                                    <select wire:model="recordForm.type"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none appearance-none bg-white transition-all
+                                               {{ $errors->has('recordForm.type') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                        <option value="Normal">Normal</option>
+                                        <option value="SC">Section Caesarea (SC)</option>
+                                    </select>
+                                    @error('recordForm.type')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Penolong</label>
+                                    <select wire:model="recordForm.helper"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none appearance-none bg-white transition-all
+                                               {{ $errors->has('recordForm.helper') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                        <option>Bidan</option>
+                                        <option>Dokter</option>
+                                        <option>Dukun</option>
+                                        <option>Lainnya</option>
+                                    </select>
+                                    @error('recordForm.helper')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Keadaan Ibu</label>
+                                <select wire:model="recordForm.condition"
+                                    class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none appearance-none bg-white transition-all
+                                           {{ $errors->has('recordForm.condition') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    <option value="Sehat">Sehat</option>
+                                    <option value="Sakit">Sakit</option>
+                                </select>
+                                @error('recordForm.condition')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Komplikasi</label>
+                                <input wire:model="recordForm.complication" type="text" placeholder="Tidak ada"
+                                    class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                           {{ $errors->has('recordForm.complication') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                @error('recordForm.complication')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Catatan</label>
+                                <textarea wire:model="recordForm.notes" rows="2"
+                                    class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all resize-none
+                                           {{ $errors->has('recordForm.notes') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"></textarea>
+                                @error('recordForm.notes')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button wire:click="saveRecord" class="flex-1 py-2.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm transition-all">Simpan</button>
+                                <button wire:click="cancelEditRecord" class="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-500 font-semibold text-sm transition-all">Batal</button>
+                            </div>
+                        </div>
+                        @else
+                        {{-- TAMPILAN --}}
                         <p class="font-bold text-gray-800 text-sm mb-3">
                             {{ $c->date_childbirth->translatedFormat('d F Y') }}
                         </p>
@@ -475,6 +899,18 @@
                         @if($c->notes)
                         <p class="text-xs text-gray-500 mt-3 pt-3 border-t border-gray-100">{{ $c->notes }}</p>
                         @endif
+                        <div class="flex items-center gap-4 mt-3 pt-3 border-t border-gray-50">
+                            <button wire:click="editRecord('childbirth', {{ $c->id_childbirth }})"
+                                class="text-xs font-semibold text-violet-500 hover:text-violet-700 transition-colors">
+                                Edit
+                            </button>
+                            <button wire:click="deleteRecord('childbirth', {{ $c->id_childbirth }})"
+                                wire:confirm="Hapus data persalinan tanggal {{ $c->date_childbirth->translatedFormat('d F Y') }}?"
+                                class="text-xs font-semibold text-red-400 hover:text-red-600 transition-colors">
+                                Hapus
+                            </button>
+                        </div>
+                        @endif
                     </div>
                     @empty
                     <p class="text-center text-gray-400 text-sm py-16">Belum ada data persalinan.</p>
@@ -485,6 +921,65 @@
                 <div x-show="tab === 'bayi'" class="space-y-3">
                     @forelse($this->selectedUser->baby as $b)
                     <div class="border border-gray-100 rounded-xl p-4">
+                        @if($editingRecordType === 'baby' && $editingRecordId === $b->id_baby)
+                        {{-- EDIT FORM --}}
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Nama Bayi</label>
+                                <input wire:model="recordForm.name" type="text"
+                                    class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                           {{ $errors->has('recordForm.name') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                @error('recordForm.name')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Jenis Kelamin</label>
+                                    <select wire:model="recordForm.gender"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none appearance-none bg-white transition-all
+                                               {{ $errors->has('recordForm.gender') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                        <option value="Laki-laki">Laki-laki</option>
+                                        <option value="Perempuan">Perempuan</option>
+                                    </select>
+                                    @error('recordForm.gender')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Waktu Lahir</label>
+                                    <input wire:model="recordForm.time_birth" type="time"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.time_birth') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.time_birth')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Tanggal Lahir</label>
+                                <input wire:model="recordForm.date_birth" type="date"
+                                    class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                           {{ $errors->has('recordForm.date_birth') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                @error('recordForm.date_birth')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Berat Lahir (gram)</label>
+                                    <input wire:model="recordForm.weight" type="number"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.weight') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.weight')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">Panjang Lahir (cm)</label>
+                                    <input wire:model="recordForm.height" type="number" step="0.1"
+                                        class="w-full px-3 py-2.5 rounded-lg border text-sm text-gray-800 outline-none transition-all
+                                               {{ $errors->has('recordForm.height') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                                    @error('recordForm.height')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button wire:click="saveRecord" class="flex-1 py-2.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-bold text-sm transition-all">Simpan</button>
+                                <button wire:click="cancelEditRecord" class="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-500 font-semibold text-sm transition-all">Batal</button>
+                            </div>
+                        </div>
+                        @else
+                        {{-- TAMPILAN --}}
                         <div class="flex items-center justify-between mb-3">
                             <p class="font-bold text-gray-800">{{ $b->name }}</p>
                             <span
@@ -515,6 +1010,18 @@
                                 <p class="font-semibold text-gray-800 text-sm">{{ $b->height }} cm</p>
                             </div>
                         </div>
+                        <div class="flex items-center gap-4 mt-3 pt-3 border-t border-gray-50">
+                            <button wire:click="editRecord('baby', {{ $b->id_baby }})"
+                                class="text-xs font-semibold text-violet-500 hover:text-violet-700 transition-colors">
+                                Edit
+                            </button>
+                            <button wire:click="deleteRecord('baby', {{ $b->id_baby }})"
+                                wire:confirm="Hapus data bayi {{ $b->name }}?"
+                                class="text-xs font-semibold text-red-400 hover:text-red-600 transition-colors">
+                                Hapus
+                            </button>
+                        </div>
+                        @endif
                     </div>
                     @empty
                     <p class="text-center text-gray-400 text-sm py-16">Belum ada data bayi.</p>

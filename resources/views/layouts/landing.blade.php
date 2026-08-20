@@ -61,6 +61,8 @@
 
     {{ $slot }}
 
+    @include('partials.install-prompt')
+
     @livewireScripts
     <script>
     if ('serviceWorker' in navigator) {

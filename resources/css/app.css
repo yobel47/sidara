@@ -19,3 +19,35 @@
         padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 }
+
+/* Banner ajakan install PWA.
+   PENTING: breakpoint sengaja 641px/1025px (bukan 640px/1024px persis) —
+   kalau persis sama dengan breakpoint sm:/lg: Tailwind, langkah minify Vite
+   akan menabrakkan @media block ini dengan punya Tailwind dan salah satunya
+   ke-drop (pernah kejadian: seluruh utility lg:/sm: hilang dari CSS hasil build). */
+.install-prompt-pos {
+    display: flex;
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    bottom: calc(64px + 16px + env(safe-area-inset-bottom, 0px));
+    z-index: 9999;
+}
+.install-prompt-card {
+    width: 100%;
+    max-width: 24rem;
+}
+@media (min-width: 641px) {
+    .install-prompt-pos {
+        justify-content: flex-end;
+        padding-right: 1.5rem;
+    }
+    .install-prompt-card {
+        max-width: 20rem;
+    }
+}
+@media (min-width: 1025px) {
+    .install-prompt-pos {
+        bottom: 1.5rem;
+    }
+}

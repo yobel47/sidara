@@ -24,7 +24,6 @@
          x-data="{
             status: $wire.entangle('statusPregnant'),
             marital: $wire.entangle('maritalStatus'),
-            dispensasi: $wire.entangle('isDispensationMarriage'),
          }">
 
         {{-- Nama Lengkap --}}
@@ -127,7 +126,7 @@
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">Status Pernikahan</label>
             <div class="grid grid-cols-2 gap-3">
-                <button type="button" @click="marital = 'sudah_menikah'; dispensasi = false"
+                <button type="button" @click="marital = 'sudah_menikah'"
                         class="px-4 py-3 rounded-xl border-2 transition-all text-sm font-bold"
                         :class="marital === 'sudah_menikah' ? 'border-rose-400 bg-rose-50 text-rose-600' : 'border-gray-200 bg-white hover:border-rose-200 text-gray-500'">
                     Sudah Menikah
@@ -154,30 +153,6 @@
                        {{ $errors->has('weddingDate') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"
             />
             @error('weddingDate')
-            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
-            @enderror
-        </div>
-
-        {{-- Checkbox dispensasi — hanya relevan kalau belum menikah (dispensasi diurus sebelum menikah) --}}
-        <label class="flex items-center gap-2.5 cursor-pointer w-fit"
-               x-show="marital === 'belum_menikah'" x-transition
-               style="{{ $maritalStatus !== 'belum_menikah' ? 'display:none' : '' }}">
-            <input wire:model="isDispensationMarriage" type="checkbox"
-                   class="w-4 h-4 rounded border-gray-300 text-rose-500 focus:ring-rose-400" />
-            <span class="text-sm text-gray-700">Menikah dengan dispensasi (di bawah usia minimal)</span>
-        </label>
-
-        {{-- Tgl Dispensasi Pernikahan — hanya kalau belum menikah & checkbox dicentang --}}
-        <div x-show="marital === 'belum_menikah' && dispensasi" x-transition
-             style="{{ ($maritalStatus !== 'belum_menikah' || !$isDispensationMarriage) ? 'display:none' : '' }}">
-            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Tgl Dispensasi Pernikahan</label>
-            <input
-                wire:model="marriageDispensationDate"
-                type="date"
-                class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 placeholder-gray-300 outline-none transition-all
-                       {{ $errors->has('marriageDispensationDate') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"
-            />
-            @error('marriageDispensationDate')
             <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
             @enderror
         </div>
