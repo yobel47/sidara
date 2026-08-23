@@ -21,6 +21,7 @@ use App\Livewire\Pages\Baby;
 use App\Livewire\Pages\MedicalRecord;
 use App\Livewire\Pages\Profile;
 use App\Livewire\Pages\UpdateStatus;
+use App\Livewire\Pages\UpdateMaritalStatus;
 use App\Livewire\Pages\Admin;
 
 /*
@@ -73,6 +74,7 @@ Route::middleware(['auth', 'profile.complete'])->group(function () {
     Route::get('/rekam-medis',              MedicalRecord::class)->name('rekam-medis');
     Route::get('/profil',                   Profile::class)->name('profil');
     Route::get('/perbarui-status',          UpdateStatus::class)->name('perbarui-status');
+    Route::get('/perbarui-status-pernikahan', UpdateMaritalStatus::class)->name('perbarui-status-pernikahan');
 });
 
 

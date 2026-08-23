@@ -128,6 +128,18 @@
         </a>
         @endif
 
+        {{-- Ubah Status Pernikahan --}}
+        <a href="{{ route('perbarui-status-pernikahan') }}" wire:navigate
+            class="w-full py-3.5 rounded-2xl border-2 border-violet-200 hover:border-violet-400
+                   text-violet-500 hover:text-violet-600 font-bold text-sm tracking-wider
+                   transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M16.5 12c1.5-1.5 3-3.5 3-5.5A3.5 3.5 0 0 0 16 3c-1.5 0-2.5.5-3.5 2-1-1.5-2-2-3.5-2A3.5 3.5 0 0 0 5.5 6.5c0 2 1.5 4 3 5.5l4 4 4-4Z" />
+            </svg>
+            Ubah Status Pernikahan
+        </a>
+
         {{-- Tombol Logout — mobile only (desktop ada di sidebar) --}}
         <button wire:click="logout" class="lg:hidden w-full py-3.5 rounded-2xl bg-gray-100 hover:bg-gray-200
                    text-gray-500 hover:text-gray-700 font-bold text-sm tracking-wider
