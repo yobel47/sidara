@@ -62,9 +62,27 @@ class User extends Authenticatable
     }
 
     // Helper: cek apakah identitas sudah diisi
+    // Kalau ada field baru yang wajib diisi ulang oleh user lama (mis. field
+    // baru ditambahkan setelah aplikasi sudah berjalan), cek kelengkapannya
+    // di sini juga — middleware ProfileComplete otomatis akan paksa user
+    // yang datanya belum lengkap balik ke halaman /identitas.
     public function hasCompletedProfile(): bool
     {
-        return $this->chUser()->exists();
+        $chUser = $this->chUser;
+
+        if (!$chUser) {
+            return false;
+        }
+
+        if ($chUser->maritalStatus === null) {
+            return false;
+        }
+
+        if ($chUser->maritalStatus === 'sudah_menikah' && $chUser->marriageNumber === null) {
+            return false;
+        }
+
+        return true;
     }
 
     public function sendPasswordResetNotification($token): void

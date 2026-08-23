@@ -17,6 +17,11 @@ class Identity extends Component
     public string $gestationalAge = '';
     public string $maritalStatus = ''; // tidak ada default, user wajib memilih
     public string $weddingDate = '';
+    public string $marriageNumber = '';
+
+    // true kalau ini user lama yang datanya sudah pernah diisi, cuma
+    // kurang field baru (bukan user baru yang belum pernah isi sama sekali)
+    public bool $isUpdatingExisting = false;
 
     public function mount(): void
     {
@@ -33,6 +38,9 @@ class Identity extends Component
             $this->gestationalAge = $chUser->gestationalAge ?? '';
             $this->maritalStatus  = $chUser->maritalStatus ?? '';
             $this->weddingDate    = $chUser->weddingDate?->format('Y-m-d') ?? '';
+            $this->marriageNumber = $chUser->marriageNumber ? (string) $chUser->marriageNumber : '';
+
+            $this->isUpdatingExisting = !auth()->user()->hasCompletedProfile();
         }
     }
 
@@ -46,8 +54,9 @@ class Identity extends Component
             'weight'  => 'required|numeric|min:20|max:200',
             'height' => 'required|numeric|min:100|max:250',
             'statusPregnant' => 'required|in:hamil,tidak_hamil',
-            'maritalStatus' => 'required|in:sudah_menikah,belum_menikah',
-            'weddingDate'   => 'nullable|date|required_if:maritalStatus,sudah_menikah',
+            'maritalStatus'  => 'required|in:sudah_menikah,belum_menikah',
+            'weddingDate'    => 'nullable|date|required_if:maritalStatus,sudah_menikah',
+            'marriageNumber' => 'nullable|integer|min:1|max:10|required_if:maritalStatus,sudah_menikah',
         ];
 
         // usiaKehamilan wajib hanya kalau status hamil
@@ -73,9 +82,13 @@ class Identity extends Component
             'height.max'      => 'Tinggi badan maksimal 250 cm.',
             'statusPregnant.required' => 'Status hamil wajib dipilih.',
             'gestationalAge.required' => 'Usia kehamilan wajib diisi.',
-            'maritalStatus.required'  => 'Status pernikahan wajib dipilih.',
-            'weddingDate.required_if' => 'Tanggal pernikahan wajib diisi.',
-            'weddingDate.date'        => 'Format tanggal pernikahan tidak valid.',
+            'maritalStatus.required'      => 'Status pernikahan wajib dipilih.',
+            'weddingDate.required_if'     => 'Tanggal pernikahan wajib diisi.',
+            'weddingDate.date'            => 'Format tanggal pernikahan tidak valid.',
+            'marriageNumber.required_if'  => 'Pernikahan ke berapa wajib diisi.',
+            'marriageNumber.integer'      => 'Pernikahan ke berapa harus berupa angka.',
+            'marriageNumber.min'          => 'Pernikahan ke berapa minimal 1.',
+            'marriageNumber.max'          => 'Pernikahan ke berapa maksimal 10.',
         ]);
 
         ChUser::updateOrCreate(
@@ -91,6 +104,7 @@ class Identity extends Component
                 'gestationalAge' => $this->statusPregnant === 'hamil' ? $this->gestationalAge : null,
                 'maritalStatus'  => $this->maritalStatus,
                 'weddingDate'    => $this->maritalStatus === 'sudah_menikah' ? $this->weddingDate : null,
+                'marriageNumber' => $this->maritalStatus === 'sudah_menikah' ? (int) $this->marriageNumber : null,
             ]
         );
 

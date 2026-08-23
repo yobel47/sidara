@@ -26,6 +26,21 @@
             marital: $wire.entangle('maritalStatus'),
          }">
 
+        @if($isUpdatingExisting)
+        {{-- Notice: user lama, cuma perlu lengkapi field baru --}}
+        <div class="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3.5">
+            <svg class="w-5 h-5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+            </svg>
+            <div>
+                <p class="text-sm font-bold text-amber-700">Data kamu sebelumnya tetap tersimpan</p>
+                <p class="text-xs text-amber-600 mt-0.5 leading-relaxed">
+                    Cuma ada pertanyaan baru yang ditandai <span class="font-bold">"Baru"</span> di bawah — lengkapi itu saja, lalu simpan lagi ya.
+                </p>
+            </div>
+        </div>
+        @endif
+
         {{-- Nama Lengkap --}}
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Lengkap</label>
@@ -153,6 +168,25 @@
                        {{ $errors->has('weddingDate') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"
             />
             @error('weddingDate')
+            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Pernikahan Ke- — hanya kalau sudah menikah --}}
+        <div x-show="marital === 'sudah_menikah'" x-transition
+             style="{{ $maritalStatus !== 'sudah_menikah' ? 'display:none' : '' }}">
+            <label class="flex items-center gap-1.5 text-sm font-semibold text-gray-700 mb-1.5">
+                Ini Pernikahan yang Ke Berapa?
+                <span class="text-[10px] font-bold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded-full">Baru</span>
+            </label>
+            <input
+                wire:model="marriageNumber"
+                type="number" min="1" max="10"
+                placeholder="Contoh: 1 untuk pernikahan pertama"
+                class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 placeholder-gray-300 outline-none transition-all
+                       {{ $errors->has('marriageNumber') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}"
+            />
+            @error('marriageNumber')
             <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
             @enderror
         </div>

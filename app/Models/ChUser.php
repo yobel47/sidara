@@ -22,13 +22,15 @@ class ChUser extends Model
         'gestationalAge',
         'maritalStatus',
         'weddingDate',
+        'marriageNumber',
     ];
 
     protected $casts = [
-        'age'         => 'integer',
-        'weight'      => 'float',
-        'height'      => 'float',
-        'weddingDate' => 'date',
+        'age'             => 'integer',
+        'weight'          => 'float',
+        'height'          => 'float',
+        'weddingDate'     => 'date',
+        'marriageNumber'  => 'integer',
     ];
 
     // Relasi ke User

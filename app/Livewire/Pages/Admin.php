@@ -115,6 +115,7 @@ class Admin extends Component
             'gestationalAge' => $ch->gestationalAge ?? '',
             'maritalStatus'  => $ch->maritalStatus ?? '',
             'weddingDate'    => $ch->weddingDate?->format('Y-m-d') ?? '',
+            'marriageNumber' => $ch->marriageNumber ? (string) $ch->marriageNumber : '',
         ];
         $this->editingProfile = true;
     }
@@ -137,6 +138,7 @@ class Admin extends Component
             'profileForm.statusPregnant' => 'required|in:hamil,tidak_hamil',
             'profileForm.maritalStatus'  => 'required|in:sudah_menikah,belum_menikah',
             'profileForm.weddingDate'    => 'nullable|date|required_if:profileForm.maritalStatus,sudah_menikah',
+            'profileForm.marriageNumber' => 'nullable|integer|min:1|max:10|required_if:profileForm.maritalStatus,sudah_menikah',
         ];
 
         if ($this->profileForm['statusPregnant'] === 'hamil') {
@@ -154,6 +156,7 @@ class Admin extends Component
             'profileForm.gestationalAge.required'  => 'Usia kehamilan wajib diisi.',
             'profileForm.maritalStatus.required'   => 'Status pernikahan wajib dipilih.',
             'profileForm.weddingDate.required_if'  => 'Tanggal pernikahan wajib diisi.',
+            'profileForm.marriageNumber.required_if' => 'Pernikahan ke berapa wajib diisi.',
         ]);
 
         ChUser::where('id_user', $this->selectedUserId)->update([
@@ -167,6 +170,7 @@ class Admin extends Component
             'gestationalAge' => $this->profileForm['statusPregnant'] === 'hamil' ? $this->profileForm['gestationalAge'] : null,
             'maritalStatus'  => $this->profileForm['maritalStatus'],
             'weddingDate'    => $this->profileForm['maritalStatus'] === 'sudah_menikah' ? $this->profileForm['weddingDate'] : null,
+            'marriageNumber' => $this->profileForm['maritalStatus'] === 'sudah_menikah' ? (int) $this->profileForm['marriageNumber'] : null,
         ]);
 
         $this->editingProfile = false;

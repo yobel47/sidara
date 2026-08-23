@@ -421,7 +421,6 @@
                             <dd class="font-semibold text-gray-800">
                                 @if($ch->maritalStatus === 'sudah_menikah')
                                 Sudah Menikah
-                                @if($ch->weddingDate) &middot; {{ $ch->weddingDate->translatedFormat('d F Y') }} @endif
                                 @elseif($ch->maritalStatus === 'belum_menikah')
                                 Belum Menikah
                                 @else
@@ -429,6 +428,20 @@
                                 @endif
                             </dd>
                         </div>
+                        @if($ch->maritalStatus === 'sudah_menikah')
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <dt class="text-xs text-gray-400 mb-1">Tanggal Pernikahan</dt>
+                            <dd class="font-semibold text-gray-800">
+                                {{ $ch->weddingDate?->translatedFormat('d F Y') ?? '—' }}
+                            </dd>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <dt class="text-xs text-gray-400 mb-1">Pernikahan Ke Berapa</dt>
+                            <dd class="font-semibold text-gray-800">
+                                {{ $ch->marriageNumber ? 'Ke-' . $ch->marriageNumber : '—' }}
+                            </dd>
+                        </div>
+                        @endif
                         <div class="col-span-2 bg-gray-50 rounded-xl p-4">
                             <dt class="text-xs text-gray-400 mb-1">Alamat</dt>
                             <dd class="font-semibold text-gray-800">{{ $ch->address }}</dd>
@@ -537,6 +550,13 @@
                                 class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none transition-all
                                        {{ $errors->has('profileForm.weddingDate') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
                             @error('profileForm.weddingDate')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Pernikahan Ke Berapa</label>
+                            <input wire:model="profileForm.marriageNumber" type="number" min="1" max="10"
+                                class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none transition-all
+                                       {{ $errors->has('profileForm.marriageNumber') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-rose-400 focus:ring-2 focus:ring-rose-100' }}">
+                            @error('profileForm.marriageNumber')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
                         </div>
                         @endif
 

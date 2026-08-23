@@ -81,7 +81,7 @@ Route::middleware(['auth', 'profile.complete'])->group(function () {
 | ADMIN — hanya bisa diakses akun yang emailnya ada di ADMIN_EMAILS
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'profile.complete'])->group(function () {
     Route::get('/admin', Admin::class)->name('admin');
 });
 
