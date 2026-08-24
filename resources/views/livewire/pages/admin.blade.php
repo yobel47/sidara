@@ -8,17 +8,27 @@
             <h1 class="text-xl font-extrabold text-gray-800">Data Pengguna</h1>
             <p class="text-sm text-gray-400 mt-0.5">{{ $users->total() }} pengguna terdaftar</p>
         </div>
-        <div class="relative w-full sm:w-72">
-            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2"
-                    viewBox="0 0 24 24">
+        <div class="flex items-center gap-2.5 w-full sm:w-auto">
+            <div class="relative w-full sm:w-72">
+                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m21 21-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0Z" />
+                    </svg>
+                </span>
+                <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari nama, username, no. telepon..."
+                    class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl bg-white
+                        focus:outline-none focus:border-rose-400 focus:ring-1 focus:ring-rose-100 transition-all">
+            </div>
+            <a href="{{ route('admin.export') }}" class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold
+                    text-green-700 bg-green-50 hover:bg-green-100 rounded-xl transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round"
-                        d="m21 21-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0Z" />
+                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                 </svg>
-            </span>
-            <input wire:model.live.debounce.300ms="search" type="text" placeholder="Cari nama, username, no. telepon..."
-                class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl bg-white
-                    focus:outline-none focus:border-rose-400 focus:ring-1 focus:ring-rose-100 transition-all">
+                <span class="hidden sm:inline">Export Excel</span>
+            </a>
         </div>
     </div>
 

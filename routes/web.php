@@ -23,6 +23,7 @@ use App\Livewire\Pages\Profile;
 use App\Livewire\Pages\UpdateStatus;
 use App\Livewire\Pages\UpdateMaritalStatus;
 use App\Livewire\Pages\Admin;
+use App\Http\Controllers\Admin\ExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +86,7 @@ Route::middleware(['auth', 'profile.complete'])->group(function () {
 */
 Route::middleware(['auth', 'profile.complete'])->group(function () {
     Route::get('/admin', Admin::class)->name('admin');
+    Route::get('/admin/export', ExportController::class)->name('admin.export');
 });
 
 
