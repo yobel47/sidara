@@ -5,6 +5,7 @@ namespace App\Livewire\Pages;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\ChUser;
 use App\Models\Pregnancy;
@@ -23,6 +24,10 @@ class Admin extends Component
     // Edit Profil (ChUser)
     public bool  $editingProfile = false;
     public array $profileForm    = [];
+
+    // Reset Password (dilakukan admin, dipakai saat email akun dipakai bersama kader)
+    public bool   $resettingPassword = false;
+    public string $newPassword       = '';
 
     // Edit satu record (pregnancy/screening/childbirth/baby) — hanya satu yang aktif sekaligus
     public ?string $editingRecordType = null;
@@ -87,6 +92,7 @@ class Admin extends Component
     {
         $this->selectedUserId = $userId;
         $this->editingProfile = false;
+        $this->cancelResetPassword();
         $this->cancelEditRecord();
     }
 
@@ -94,7 +100,40 @@ class Admin extends Component
     {
         $this->selectedUserId = null;
         $this->editingProfile = false;
+        $this->cancelResetPassword();
         $this->cancelEditRecord();
+    }
+
+    // ── RESET PASSWORD (oleh admin) ─────────────────────────
+
+    public function resetPasswordForm(): void
+    {
+        $this->newPassword       = '';
+        $this->resettingPassword = true;
+    }
+
+    public function cancelResetPassword(): void
+    {
+        $this->resettingPassword = false;
+        $this->newPassword       = '';
+        $this->resetErrorBag('newPassword');
+    }
+
+    public function resetPassword(): void
+    {
+        $this->validate([
+            'newPassword' => 'required|string|min:6',
+        ], [
+            'newPassword.required' => 'Password baru wajib diisi.',
+            'newPassword.min'      => 'Password baru minimal 6 karakter.',
+        ]);
+
+        $user = User::findOrFail($this->selectedUserId);
+        $user->update(['password' => Hash::make($this->newPassword)]);
+
+        $name = $user->chUser?->fullname ?? $user->name;
+        $this->cancelResetPassword();
+        $this->adminNotice = "Password akun {$name} berhasil direset.";
     }
 
     // ── EDIT PROFIL (ChUser) ────────────────────────────────

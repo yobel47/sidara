@@ -4,6 +4,7 @@ namespace App\Livewire\Pages\Auth;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Password;
+use App\Models\User;
 
 class ForgotPassword extends Component
 {
@@ -23,6 +24,12 @@ class ForgotPassword extends Component
         ]);
 
         $this->submitted = true;
+
+        if (User::where('email', $this->email)->count() > 1) {
+            $this->submitted = false;
+            $this->addError('email', 'Email ini digunakan oleh lebih dari satu akun. Silakan hubungi admin untuk reset password.');
+            return;
+        }
 
         $status = Password::sendResetLink(['email' => $this->email]);
 

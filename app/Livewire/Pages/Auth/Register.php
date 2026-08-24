@@ -24,7 +24,6 @@ class Register extends Component
             ],
             'email' => [
                 'required', 'email', 'max:255',
-                'unique:users,email',
             ],
             'password' => [
                 'required', 'string', 'min:6',
@@ -40,7 +39,6 @@ class Register extends Component
             'username.regex'                => 'Username hanya boleh huruf, angka, dan underscore.',
             'email.required'                => 'Email wajib diisi.',
             'email.email'                   => 'Format email tidak valid.',
-            'email.unique'                  => 'Email sudah terdaftar.',
             'password.required'             => 'Password wajib diisi.',
             'password.min'                  => 'Password minimal 6 karakter.',
             'passwordConfirmation.required' => 'Konfirmasi password wajib diisi.',

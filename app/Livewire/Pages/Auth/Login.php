@@ -4,8 +4,10 @@ namespace App\Livewire\Pages\Auth;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use App\Models\User;
 
 class Login extends Component
 {
@@ -35,21 +37,31 @@ class Login extends Component
         // Deteksi apakah input adalah email atau username
         $field = filter_var($this->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        $success = Auth::attempt([
-            $field     => $this->username,
-            'password' => $this->password,
-        ], remember: true);
+        // Email boleh dipakai lebih dari satu akun (mis. menumpang email kader),
+        // jadi login by email jadi ambigu — minta pakai username saja.
+        if ($field === 'email' && User::where('email', $this->username)->count() > 1) {
+            $this->addError('username', 'Email ini digunakan oleh lebih dari satu akun. Silakan login menggunakan username.');
+            return;
+        }
 
-        if (!$success) {
+        $user = User::where($field, $this->username)->first();
+
+        if (!$user) {
             RateLimiter::hit($throttleKey);
-            $this->addError('password', 'Username/email atau password salah.');
+            $this->addError('username', $field === 'email' ? 'Email tidak ditemukan.' : 'Username tidak ditemukan.');
+            return;
+        }
+
+        if (!Hash::check($this->password, $user->password)) {
+            RateLimiter::hit($throttleKey);
+            $this->addError('password', 'Password salah.');
             return;
         }
 
         RateLimiter::clear($throttleKey);
+        Auth::login($user, remember: true);
         request()->session()->regenerate();
 
-        $user   = auth()->user();
         $chUser = $user->chUser;
 
         $wasAway     = !$user->last_login_at || $user->last_login_at->lt(now()->subDays(30));

@@ -576,6 +576,39 @@
                     @else
                     <p class="text-center text-gray-400 text-sm py-16">Pengguna belum mengisi data identitas.</p>
                     @endif
+
+                    {{-- ── RESET PASSWORD (admin) ── --}}
+                    @if(!$resettingPassword)
+                    <button wire:click="resetPasswordForm" class="w-full mt-2 py-3 rounded-xl border-2 border-amber-200 hover:border-amber-400
+                               text-amber-600 hover:text-amber-700 font-bold text-sm transition-all">
+                        Reset Password
+                    </button>
+                    @else
+                    <div class="mt-3 space-y-3 bg-amber-50/60 border border-amber-100 rounded-xl p-4">
+                        <p class="text-xs text-gray-500">
+                            Set password baru untuk akun ini. Berikan password ini ke penggunanya secara langsung.
+                        </p>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Password Baru</label>
+                            <input wire:model="newPassword" type="text"
+                                class="w-full px-4 py-3 rounded-xl border text-sm text-gray-800 outline-none transition-all
+                                       {{ $errors->has('newPassword') ? 'border-rose-400 ring-2 ring-rose-100' : 'border-gray-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-100' }}">
+                            @error('newPassword')<p class="text-xs text-rose-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div class="flex items-center gap-2 pt-1">
+                            <button
+                                @click="confirmAction('Reset password akun ini sekarang?', {title: 'Reset Password?', confirmText: 'Ya, Reset', confirmColor: '#f59e0b'}).then(ok => ok && $wire.resetPassword())"
+                                class="flex-1 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-[0.98]
+                                       text-white font-bold text-sm transition-all">
+                                Simpan Password Baru
+                            </button>
+                            <button wire:click="cancelResetPassword" class="px-5 py-3 rounded-xl border border-gray-200 hover:border-gray-300
+                                       text-gray-500 font-semibold text-sm transition-all">
+                                Batal
+                            </button>
+                        </div>
+                    </div>
+                    @endif
                 </div>
 
                 {{-- ── KUNJUNGAN ANC ── --}}

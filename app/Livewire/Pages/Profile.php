@@ -55,7 +55,7 @@ class Profile extends Component
         $this->validate([
             'fullname' => 'required|string|min:3|max:100',
             'username' => ['required', 'string', 'min:3', 'max:50', Rule::unique('users', 'username')->ignore($userId)],
-            'email'    => ['required', 'email', Rule::unique('users', 'email')->ignore($userId)],
+            'email'    => ['required', 'email'],
             'phone'    => 'required|string|min:10|max:15',
             'address'  => 'required|string|min:5',
         ], [
@@ -66,7 +66,6 @@ class Profile extends Component
             'username.unique'   => 'Username sudah digunakan.',
             'email.required'    => 'Email wajib diisi.',
             'email.email'       => 'Format email tidak valid.',
-            'email.unique'      => 'Email sudah digunakan.',
             'phone.required'    => 'No. HP wajib diisi.',
             'phone.min'         => 'No. HP minimal 10 digit.',
             'address.required'  => 'Alamat wajib diisi.',
